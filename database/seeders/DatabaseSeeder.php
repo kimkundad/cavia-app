@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,5 +23,86 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+
+        DB::table('roles')->insert([
+            [
+                'name' => 'superadmin',
+                'description' => 'A SuperAdmin User'
+            ],
+            [
+                'name' => 'admin',
+                'description' => 'A admin User'
+            ],
+            [
+                'name' => 'user',
+                'description' => 'A customer User'
+            ]
+        ]);
+
+        DB::table('role_user')->insert([
+            [
+                'role_id' => 1,
+                'user_id' => 1
+            ],
+            [
+                'role_id' => 2,
+                'user_id' => 2
+            ],
+            [
+                'role_id' => 3,
+                'user_id' => 3
+            ]
+        ]);
+        DB::table('users')->insert([
+            [
+              'name' => 'superadmin',
+              'email' => 'admin@email.com',
+              'password' => bcrypt('qaz123456'),
+              'code_user' => 'CV999999',
+              'avatar' => '1483537975.png',
+              'email_verified_at' => '2020-08-01 14:27:38',
+              'provider' => 'email',
+              'phone' => '0912345678',
+              'is_admin' => 1
+            ],
+            [
+              'name' => 'administrator',
+              'email' => 'administrator@email.com',
+              'password' => bcrypt('qaz123456'),
+              'code_user' => 'CV111111',
+              'avatar' => '1483537975.png',
+              'email_verified_at' => '2020-08-01 14:27:38',
+              'provider' => 'email',
+              'phone' => '0812345678',
+              'is_admin' => 1
+            ],
+            [
+                'name' => 'kimkundad',
+                'email' => 'kim.kundad@email.com',
+                'password' => bcrypt('1429800'),
+                'code_user' => 'UD000001',
+                'avatar' => '1483537975.png',
+                'email_verified_at' => '2020-08-01 14:27:38',
+                'provider' => 'email',
+                'phone' => '0812345678',
+                'is_admin' => 1
+              ]
+        ]);
+
+        DB::table('settings')->insert([
+            [
+            'nme_website' => 'wealthangels',
+            'facebook' => 'Wealthangels',
+            'facebook_url' => 'https://www.facebook.com/wealthangels',
+            'facebook' => 'Wealthangels',
+            'facebook_image' => '1607528770.jpg',
+            'phone' => '0958467417',
+            'email' => 'thewealthangels@gmail.com'
+            ]
+        ]);
+
+
+
     }
 }
