@@ -1,6 +1,6 @@
 <?php
 
-use Maatwebsite\Excel\Excel;
+use Excel;
 
 return [
     'exports' => [
@@ -52,7 +52,7 @@ return [
             'test_auto_detect'       => true,
         ],
 
-        
+
         /*
         |--------------------------------------------------------------------------
         | Worksheet properties
