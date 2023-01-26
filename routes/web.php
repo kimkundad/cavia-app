@@ -65,11 +65,11 @@ Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
     Route::get('/deleteCart/{id}', [App\Http\Controllers\HomeController::class, 'deleteCart'])->name('deleteCart');
     Route::get('/deleteCart2/{id}', [App\Http\Controllers\HomeController::class, 'deleteCart2'])->name('deleteCart2');
 
-    
+
 
 });
 
-Route::group(['middleware' => ['UserRole:manager|employee']], function() {
+Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
   
     Route::get('/import', [App\Http\Controllers\DashboardController::class, 'import'])->name('import');
 
