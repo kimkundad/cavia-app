@@ -65,6 +65,7 @@ Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
     Route::get('/deleteCart/{id}', [App\Http\Controllers\HomeController::class, 'deleteCart'])->name('deleteCart');
     Route::get('/deleteCart2/{id}', [App\Http\Controllers\HomeController::class, 'deleteCart2'])->name('deleteCart2');
 
+    
 
 });
 
