@@ -71,7 +71,7 @@ Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
 
 Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
   
-    Route::get('/import', [App\Http\Controllers\DashboardController::class, 'import'])->name('import');
+    Route::post('/import', [App\Http\Controllers\DashboardController::class, 'import'])->name('import');
 
     Route::get('/admin/dashboard', [App\Http\Controllers\DashboardController::class, 'index']);
     Route::resource('/admin/product', App\Http\Controllers\ProductController::class);
@@ -84,7 +84,7 @@ Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
     Route::post('admin/add_point_user/{id}', [App\Http\Controllers\UserController::class, 'add_point_user'])->name('add_point_user');
     Route::get('api/del_point_user/{id}', [App\Http\Controllers\UserController::class, 'del_point_user'])->name('del_point_user');
 
-    Route::get('api/user_search', [App\Http\Controllers\UserController::class, 'user_search']);
+    Route::get('admin/user_search', [App\Http\Controllers\UserController::class, 'user_search']);
 
     Route::resource('/admin/slide_show', App\Http\Controllers\SlideController::class);
     Route::post('api/slide_status', [App\Http\Controllers\SlideController::class, 'slide_status'])->name('slide_status');

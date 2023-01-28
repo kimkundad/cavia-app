@@ -161,16 +161,16 @@ window.gaTitle = 'หน้าแรก';
                                                         @elseif($u->type == 2)
                                                         {{ $u->detail }}
                                                         @else
-                                                        {{ number_format((float)$u->total_valid_bet_amount, 0, '.', '') }}
+                                                        {{ number_format($u->total_valid_bet_amount, 2) }}
                                                         @endif
                                                       
                                                       </td>
                           <td> @if($u->type == 1)
-                                                       <span class="text-danger"> - {{ number_format((float)$u->point, 0, '.', '') }} </span>
+                                                       <span class="text-danger"> - {{ number_format($u->point, 2) }} </span>
                                                         @else
-                                                        <span class="text-success">+ {{ number_format((float)$u->point, 0, '.', '') }} </span>
+                                                        <span class="text-success">+ {{ number_format($u->point, 2) }} </span>
                                                         @endif</td>
-                          <td>{{ $u->last_point }}</td>
+                          <td>{{ number_format($u->last_point, 2) }} </td>
                           <td><a href="{{ url('api/del_point_user/'.$u->id) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a></td>
                         </tr>
                         @endforeach

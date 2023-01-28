@@ -8289,9 +8289,9 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   left: 0;
   width: 100%;
   text-align: center;
-  display: none;
-  visibility: hidden;
-  opacity: 0;
+  display: block;
+  visibility: visible;
+  opacity: 1;
 }
 
 .ps-carousel--nav-inside .owl-dots .owl-dot {

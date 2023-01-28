@@ -155,7 +155,18 @@ class HomeController extends Controller
             'address' => 'required'
         ]);
 
-        $randomSixDigitInt = 'ORDER'.(\random_int(1000000, 9999999));
+
+        if($request['total'] > Auth::user()->point){
+            return redirect(url('checkout/'))->with('pay_error','เพิ่ม เสร็จเรียบร้อยแล้ว');
+        }
+
+        $api_date = date("YmdHi");
+
+        $randomSixDigitInt = $api_date.''.Auth::user()->id.''.$request['total'].''.Auth::user()->id;
+
+        $order_check = order::where('order_no', $randomSixDigitInt)->count();
+        if($order_check == 0){
+
 
           $package = new order();
           $package->user_id = Auth::user()->id;
@@ -168,6 +179,17 @@ class HomeController extends Controller
           $package->save();
 
           $the_id = $package->id;
+
+          $user = User::where('id', Auth::user()->id)->first();
+          $mypoint = ($user->point - $request['total']);
+
+          DB::table('users')
+            ->where('id', Auth::user()->id)
+            ->update(['point' => $mypoint]);
+
+            DB::table('orders')
+            ->where('id', $the_id)
+            ->update(['old_point' => Auth::user()->point]);
 
           $last = 0;
 
@@ -216,17 +238,6 @@ class HomeController extends Controller
 
           }
 
-          $user = User::where('id', Auth::user()->id)->first();
-          $mypoint = ($user->point - $request['total']);
-
-          DB::table('users')
-            ->where('id', Auth::user()->id)
-            ->update(['point' => $mypoint]);
-
-            DB::table('orders')
-            ->where('id', $the_id)
-            ->update(['old_point' => $mypoint]);
-
           unset($cart);
          session()->forget('cart');
 
@@ -255,8 +266,15 @@ class HomeController extends Controller
         curl_close($chOne);
 
 
+        return redirect(url('payment_success/'.$randomSixDigitInt))->with('pay_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
 
-         return redirect(url('payment_success/'.$randomSixDigitInt))->with('pay_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
+    }else{
+
+        return redirect(url('payment_success/'.$randomSixDigitInt))->with('pay_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
+
+    }
+
+         
     }
 
 

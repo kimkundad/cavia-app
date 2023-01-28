@@ -32,7 +32,7 @@ class OrderController extends Controller
                 
             }
         }
-
+       // dd($objs);
         $data['objs'] = $objs;
         return view('admin.order.index', $data);
     }

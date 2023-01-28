@@ -32,6 +32,16 @@ $(document).ready(function(){
 
 @endif
 
+@if ($message = Session::get('pay_error'))
+
+$(document).ready(function(){
+
+    swal("Point ของคุณไม่เพียงพอ!");
+  
+    });
+
+@endif
+
 @if ($message = Session::get('pay_success'))
 
 $(document).ready(function(){

@@ -33,7 +33,7 @@ class CreateUsersTable extends Migration
             $table->integer('shop_id')->default('0');
             $table->integer('status')->default('0');
             $table->string('code_user')->nullable();
-            $table->string('point')->nullable();
+            $table->double('point', 15, 2)->default('0.0');
             $table->text('session_id')->nullable();
             $table->rememberToken();
             $table->timestamps();

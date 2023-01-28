@@ -51,7 +51,7 @@ window.gaTitle = 'หน้าแรก';
   <br><br>
   <div class="card">
     <div class="card-body">
-      <h4 class="card-title">ข้อมูลการสะสมแต้ม ทั้งหมด ( {{ count($point) }} รายการ )</h4>
+      <h4 class="card-title">ข้อมูลการสะสมแต้ม ทั้งหมด ( {{ ($point_count) }} รายการ )</h4>
 
       <div class="table-responsive">
                     <table class="table">
@@ -73,14 +73,14 @@ window.gaTitle = 'หน้าแรก';
                           <td>@if($u->type == 1)
                                                         {{ $u->detail }}
                                                         @else
-                                                        {{ number_format((float)$u->total_valid_bet_amount, 0, '.', '') }}
+                                                        {{ number_format($u->total_valid_bet_amount, 2) }}
                                                         @endif</td>
                           <td> @if($u->type == 1)
-                                                       <span class="text-danger"> - {{ number_format((float)$u->points, 0, '.', '') }} </span>
+                                                       <span class="text-danger"> - {{ number_format($u->points, 2) }}  </span>
                                                         @else
-                                                        <span class="text-success">+ {{ number_format((float)$u->points, 0, '.', '') }} </span>
+                                                        <span class="text-success">+ {{ number_format($u->points, 2) }} </span>
                                                         @endif</td>
-                          <td>{{ $u->last_point }}</td>
+                          <td>{{ number_format($u->last_point, 2) }}</td>
                           <td><a href="{{ url('api/del_point_user_2/'.$u->idp) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a></td>
                         </tr>
                         @endforeach
@@ -89,7 +89,9 @@ window.gaTitle = 'หน้าแรก';
                       </tbody>
                     </table>
                   </div>
-                  {{ $point->links() }}
+
+                  @include('admin.pagination.default', ['paginator' => $point])
+            
 
 
     </div>

@@ -70,7 +70,7 @@
                                     
                                 </div>
                                 <div class="ps-cart__footer">
-                                    <h3>Point Total:<strong>{{ $total }}</strong></h3>
+                                    <h3>Point Total:<strong>{{ number_format($total, 2) }}</strong></h3>
                                     <figure><a class="ps-btn" href="{{ url('cart') }}">View Cart</a><a class="ps-btn" href="{{ url('checkout') }}">Checkout</a></figure>
                                 </div>
                             </div>

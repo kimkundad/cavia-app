@@ -23,7 +23,7 @@ class CreateProductsTable extends Migration
             $table->integer('status')->default('0');
             $table->integer('stock')->default('0');
             $table->integer('view')->default('0');
-            $table->float('point', 8, 2)->default('0.0');
+            $table->double('point', 15, 2)->default('0.0');
             $table->text('brand')->nullable();
             $table->integer('status_2')->default('0');
             $table->timestamps();

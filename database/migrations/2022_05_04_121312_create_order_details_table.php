@@ -20,7 +20,7 @@ class CreateOrderDetailsTable extends Migration
             $table->string('pro_name')->nullable();
             $table->string('pro_point')->nullable();
             $table->string('pro_image')->nullable();
-            $table->integer('amount')->default('0');
+            $table->double('amount', 15, 2)->default('0.0');
             $table->integer('pro_id')->default('0');
             $table->integer('status')->default('0');
             $table->timestamps();

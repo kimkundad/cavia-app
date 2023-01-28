@@ -85,7 +85,7 @@ class DatabaseSeeder extends Seeder
                 'avatar' => '1483537975.png',
                 'email_verified_at' => '2020-08-01 14:27:38',
                 'provider' => 'email',
-                'phone' => '0812345678',
+                'phone' => 'kimkundad',
                 'is_admin' => 1
               ]
         ]);

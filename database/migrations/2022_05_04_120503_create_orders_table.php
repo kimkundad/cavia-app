@@ -21,13 +21,14 @@ class CreateOrdersTable extends Migration
             $table->string('sum_point')->nullable();
             $table->text('name_product')->nullable();
             $table->string('shipping')->nullable();
-            $table->string('name_order')->nullable();
+            $table->string('name_order')->nullable(); 
             $table->string('gift')->nullable();
             $table->string('telephone_order')->nullable();
             $table->text('address')->nullable();
             $table->string('shipping_price')->nullable();
             $table->text('note')->nullable();
             $table->integer('status')->default('0');
+            $table->double('old_point', 15, 2)->default('0.0');
             $table->timestamps();
         });
     }

@@ -17,12 +17,16 @@ class CreatePointsTable extends Migration
             $table->id();
             $table->string('user_key')->nullable();
             $table->string('date')->nullable();
-            $table->float('total_valid_bet_amount', 8, 2)->default('0.0');
+            $table->double('total_valid_bet_amount', 15, 2)->default('0.0');
             $table->integer('type')->default('0');
             $table->integer('status')->default('0');
+            $table->double('point', 15, 2)->default('0.0');
+            $table->double('last_point', 15, 2)->default('0.0');
+            $table->text('detail')->nullable();
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

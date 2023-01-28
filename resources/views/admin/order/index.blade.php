@@ -38,19 +38,19 @@ window.gaTitle = 'หน้าแรก';
                         </thead>
                         <tbody>
                       
-						@if(isset($objs))
+						      @if(isset($objs))
                       @foreach($objs as $u)
                           <tr access_id="{{$u->id}}">
                             <td>
                               {{$u->order_no}}
                             </td>
                             <td>
-                            {{ formatDateThat($u->created_at)}}
+                            {{ $u->created_at }}
                             </td>
                             <td>
-                            {{$u->sum_point}}
+                            {{ number_format($u->sum_point, 2)}}
                             </td>
-							<td>
+							              <td>
                             <a href="{{ url('users/'.$u->user_idx.'/edit') }}">{{$u->user_name}}</a>
                             </td>
                             @if($u->status == 0)
