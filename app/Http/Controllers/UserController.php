@@ -78,17 +78,16 @@ class UserController extends Controller
 
         $package
        ->roles()
-       ->attach(Role::where('name', 'customer')->first());
+       ->attach(Role::where('name', 'user')->first());
            
        }else{
 
         $package
        ->roles()
-       ->attach(Role::where('name', 'employee')->first());
+       ->attach(Role::where('name', 'admin')->first());
 
        }
        
-
 
        return redirect(url('admin/users/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
