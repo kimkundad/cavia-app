@@ -32,8 +32,6 @@ class DashboardController extends Controller
 
         $data['sum'] = 1;
         return view('admin.dashboard.index', $data);
-        
-
     }
 
 
