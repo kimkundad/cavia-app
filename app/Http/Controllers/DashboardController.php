@@ -10,7 +10,7 @@ use App\Models\order;
 use App\Models\point;
 use App\Models\product;
 use App\Imports\UsersImport;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Jobs\UserUpPoint;
 
 class DashboardController extends Controller
