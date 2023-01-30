@@ -51,7 +51,7 @@ window.gaTitle = 'หน้าแรก';
                             {{ number_format($u->sum_point, 2)}}
                             </td>
 							              <td>
-                            <a href="{{ url('users/'.$u->user_idx.'/edit') }}">{{$u->user_name}}</a>
+                            <a href="{{ url('admin/users/'.$u->user_idx.'/edit') }}">{{$u->user_name}}</a>
                             </td>
                             @if($u->status == 0)
                                                     <td class="text-warning">
