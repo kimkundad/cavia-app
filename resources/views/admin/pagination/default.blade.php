@@ -4,7 +4,7 @@
                 
 
                                     <nav>
-                                        <ul class="pagination">
+                                        <ul class="pagination flex-wrap">
                                           <li class="page-item"><a class="page-link" href="{{ $paginator->url(1) }}"><i class="icon-arrow-left"></i></a></li>
                                           @for ($i = 1; $i <= $paginator->lastPage(); $i++)
                                           <li class="page-item {{ ($paginator->currentPage() == $i) ? ' active' : '' }}"><a class="page-link" href="{{ $paginator->url($i) }}">{{ $i }}</a></li>
