@@ -67,7 +67,7 @@ window.gaTitle = 'หน้าแรก';
                         </tbody>
                       </table>
                       </div>
-					  {{ $objs->links() }}
+                      @include('admin.pagination.default', ['paginator' => $objs])
                     </div>
                   </div>
                 </div>
