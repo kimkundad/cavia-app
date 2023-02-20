@@ -31,6 +31,9 @@ Route::get('/upgame_allgame1', [App\Http\Controllers\HomeController::class, 'upg
 
 Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
 
+    
+    Route::get('/spin_wheel', [App\Http\Controllers\HomeController::class, 'spin_wheel'])->name('spin_wheel');
+
     Route::get('/add_to_checkout/{id}', [App\Http\Controllers\HomeController::class, 'add_to_checkout'])->name('add_to_checkout');
 
     Route::get('/cart', [App\Http\Controllers\HomeController::class, 'cart'])->name('cart');

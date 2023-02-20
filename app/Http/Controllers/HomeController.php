@@ -46,6 +46,10 @@ class HomeController extends Controller
         return view('welcome', $data);
     }
 
+    public function spin_wheel(){
+        $data['obj'] = '1';
+        return view('spin_wheel', $data);
+    }
 
     public function upgame_Joker(){
 
