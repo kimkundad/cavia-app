@@ -21,6 +21,13 @@
     line-height: 30px;
     color: #dbdbdb;
 }
+.ps-breadcrumb .breadcrumb li {
+    font-family: 'Kanit', sans-serif;
+}
+.ps-table thead > tr > th {
+    font-family: 'Kanit', sans-serif;
+    font-size: 14px
+}
 .owl-carousel .owl-stage {
     min-height: 200px;
 }

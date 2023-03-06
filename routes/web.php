@@ -29,10 +29,17 @@ Route::get('/upgame_pg', [App\Http\Controllers\HomeController::class, 'upgame_pg
 Route::get('/upgame_allgame1', [App\Http\Controllers\HomeController::class, 'upgame_allgame'])->name('upgame_allgame');
 
 
+
+Route::get('api/data_labelwheel', [App\Http\Controllers\ServiceController::class, 'data_labelwheel'])->name('data_labelwheel');
+
+Route::get('api/data_wheel', [App\Http\Controllers\ServiceController::class, 'data_wheel'])->name('data_wheel');
+
 Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
 
+    Route::get('api/addwheelresult', [App\Http\Controllers\ServiceController::class, 'addwheelresult'])->name('addwheelresult');
     
     Route::get('/spin_wheel', [App\Http\Controllers\HomeController::class, 'spin_wheel'])->name('spin_wheel');
+    
 
     Route::get('/add_to_checkout/{id}', [App\Http\Controllers\HomeController::class, 'add_to_checkout'])->name('add_to_checkout');
 
@@ -100,6 +107,10 @@ Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
     Route::post('api/post_setting', [App\Http\Controllers\SettingController::class, 'post_setting'])->name('post_setting');
 
     Route::get('admin/get_point', [App\Http\Controllers\DashboardController::class, 'get_point'])->name('get_point');
-
+    Route::get('admin/get_point/create', [App\Http\Controllers\DashboardController::class, 'get_point_create'])->name('get_point_create');
+    Route::get('admin/edit_point/{id}', [App\Http\Controllers\DashboardController::class, 'edit_point'])->name('edit_point');
+    Route::post('api/post_wheel/{id}', [App\Http\Controllers\DashboardController::class, 'post_wheel'])->name('post_wheel');
+ 
+    Route::get('admin/wheel', [App\Http\Controllers\DashboardController::class, 'wheel'])->name('wheel');
   
 });

@@ -9,6 +9,7 @@ use App\Models\slide;
 use App\Models\order;
 use App\Models\point;
 use App\Models\product;
+use App\Models\wheelsetting;
 use App\Imports\UsersImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Jobs\UserUpPoint;
@@ -17,6 +18,37 @@ class DashboardController extends Controller
 {
     //
     public function index(){
+
+        $objs = DB::table('wheel_logs')->select(
+            'wheel_logs.*',
+            'wheel_logs.id as id_q',
+            'users.*'
+            )
+            ->leftjoin('users', 'users.id',  'wheel_logs.user_id')
+            ->orderby('wheel_logs.id', 'desc')
+            ->paginate(10);
+
+        $data['objs'] = $objs;
+
+        $count_wheel = \DB::table('wheel_logs')
+            ->whereDate('date_time', date("Y-m-d"))
+            ->count();
+
+            $data['count_wheel'] = $count_wheel;
+
+
+            $sum_wheel = \DB::table('wheel_logs')
+            ->whereDate('date_time', date("Y-m-d"))
+            ->sum('coins');
+
+            $data['sum_wheel'] = $sum_wheel;
+
+
+            $sum_wheel_all = \DB::table('wheel_logs')
+            ->sum('coins');
+
+            $data['sum_wheel_all'] = $sum_wheel_all;
+
 
         $User = User::where('id', '!=', 1 )->where('id', '!=', 2 )->count();
         $data['User'] = $User;
@@ -32,6 +64,65 @@ class DashboardController extends Controller
 
         $data['sum'] = 1;
         return view('admin.dashboard.index', $data);
+    }
+
+    public function wheel(){
+
+        $objs = \DB::table('wheelsetting')->wherein('id', [1,2,3,4,5,6])->get();
+        $data['objs'] = $objs;
+
+        $data['sum'] = 1;
+        return view('admin.wheel.index', $data);
+    }
+
+    public function get_point_create(){
+
+      $package = new wheelsetting();
+      $package->value = 1;
+      $package->text = 1;
+      $package->message = 1;
+      $package->percent = 1;
+      $package->minDegree = 1;
+      $package->maxDegree = 1;
+      $package->save();
+
+      return redirect(url('admin/wheel/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+
+    }
+
+
+    public function edit_point($id){
+
+        $objs = \DB::table('wheelsetting')->where('id', $id)->first();
+        $data['objs'] = $objs;
+        
+
+        $data['id'] = $id;
+        return view('admin.wheel.edit', $data);
+
+    }
+
+
+    public function post_wheel(Request $request, $id){
+
+        $this->validate($request, [
+            'value' => 'required',
+            'text' => 'required',
+            'message' => 'required',
+            'percent' => 'required'
+        ]);
+
+        $package = wheelsetting::find($id);
+        $package->value = $request['value'];
+        $package->text = $request['text'];
+        $package->message = $request['message'];
+        $package->percent = $request['percent'];
+        $package->minDegree = $request['minDegree'];
+        $package->maxDegree = $request['maxDegree'];
+        $package->save();
+
+      return redirect(url('admin/wheel/'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+
     }
 
 

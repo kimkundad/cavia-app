@@ -22,6 +22,7 @@ class SettingController extends Controller
 
         }
         
+
         public function post_setting(Request $request){
 
             $image = $request->file('image');
@@ -36,6 +37,7 @@ class SettingController extends Controller
             $obj = setting::find($id);
             $obj->nme_website = $request['nme_website'];
             $obj->facebook = $request['facebook'];
+            $obj->get_my_file = $request['get_my_file'];
             $obj->facebook_url = $request['facebook_url'];
             $obj->twitter = $request['twitter'];
             $obj->facebook_title = $request['facebook_title'];

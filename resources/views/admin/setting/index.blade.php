@@ -47,6 +47,11 @@ window.gaTitle = 'หน้าแรก';
         </div>
 
         <div class="form-group">
+          <label for="exampleInputUsername1">ตั้งค่า point หมุนกงล้อ <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" name="get_my_file" value="{{ $objs->get_my_file }}">
+        </div>
+
+        <div class="form-group">
           <label for="exampleInputUsername1">ชื่อ facebook <span class="text-danger">*</span></label>
           <input type="text" class="form-control" id="exampleInputUsername1" name="facebook" value="{{ $objs->facebook }}">
         </div>

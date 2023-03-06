@@ -83,7 +83,7 @@
                                 <a class="header__extra" href="#"><i class="icon-gift"></i></a>
                             </div>
                             <div class="ps-block__right" style="padding-left: 10px;">
-                                <p><a href="https://line.me/R/ti/p/@859zubjc" target="_blank">Point<strong>{{number_format((float)Auth::user()->point, 0, '.', '')}}</strong></a></p>
+                                <p><a href="https://line.me/R/ti/p/@859zubjc" target="_blank">Point<strong id="my_cointsxx">{{number_format((float)Auth::user()->point, 0, '.', '')}}</strong></a></p>
                             </div>
                         </div>
                         @endif
@@ -151,7 +151,7 @@
                         </div> -->
                         <div class="dropdown show text-left" style=" margin-top: 8px;">
                         <a href="#" class="dropdown-toggle dropdown_style " role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-                        <i class="icon-gift" style="font-size: 16px;"></i> {{number_format((float)Auth::user()->point, 0, '.', '')}} <br> <i class="icon-user" style="font-size: 16px;"></i> {{Auth::user()->name}} </a>
+                        <i class="icon-gift" style="font-size: 16px;"></i> <span id="my_coints">{{number_format((float)Auth::user()->point, 0, '.', '')}}</span> <br> <i class="icon-user" style="font-size: 16px;"></i> {{Auth::user()->name}} </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
                                 <li style="padding: 7px 13px; font-size:14px"><a href="{{ url('account') }}" >ข้อมูลบัญชี</a></li>
                                 <li style="padding: 7px 13px; font-size:14px"><a href="{{ url('history') }}" >ประวัติ</a></li>

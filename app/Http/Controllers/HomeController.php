@@ -47,8 +47,43 @@ class HomeController extends Controller
     }
 
     public function spin_wheel(){
-        $data['obj'] = '1';
+
+        $cat = DB::table('settings')
+          ->where('id', 1)
+          ->first();
+
+        $coins_wheel_turn = $cat->get_my_file;
+
+        $free_wheel = \DB::table('wheel_logs')
+            ->where('user_id', Auth::user()->id)
+            ->whereDate('date_time', date("Y-m-d"))
+            ->count();
+
+        $objs = DB::table('wheel_logs')->select(
+            'wheel_logs.*',
+            'wheel_logs.id as id_q',
+            'users.*'
+            )
+            ->leftjoin('users', 'users.id',  'wheel_logs.user_id')
+            ->where('wheel_logs.coins', '>',0)
+            ->orderby('wheel_logs.id', 'desc')
+            ->limit(12)
+            ->get();
+
+        $wheelsetting = \DB::table('wheelsetting')->select('text')->wherein('id', [1,2,3,4,5,6])->get();
+        $data['user'] = $objs;
+        $data['obj'] = $wheelsetting;
+        $data['free_wheel'] = $free_wheel;
+        $data['coins_wheel_turn'] = $coins_wheel_turn;
         return view('spin_wheel', $data);
+    }
+
+    public function addwheelresult(){
+
+        return response()->json([
+            'access_token' => 'data'
+        ]);
+
     }
 
     public function upgame_Joker(){

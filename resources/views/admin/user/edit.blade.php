@@ -161,7 +161,11 @@ window.gaTitle = 'หน้าแรก';
                                                         @elseif($u->type == 2)
                                                         {{ $u->detail }}
                                                         @else
-                                                        {{ number_format($u->total_valid_bet_amount, 2) }}
+                                                        @if($u->detail !== NULL)
+                                                            {{ $u->detail }}
+                                                        @else
+                                                            {{ number_format($u->total_valid_bet_amount, 0) }}
+                                                        @endif
                                                         @endif
                                                       
                                                       </td>

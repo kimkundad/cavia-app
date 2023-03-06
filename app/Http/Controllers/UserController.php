@@ -184,6 +184,7 @@ class UserController extends Controller
 
      //   dd($get_point);
 
+     
         $package = new point();
        $package->user_key = $request['phone'];
        $package->date = $request['date'];
