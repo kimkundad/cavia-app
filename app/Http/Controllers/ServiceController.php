@@ -61,7 +61,8 @@ class ServiceController extends Controller
             \DB::table('wheel_logs')->insert(
 				array(
 					'user_id' => Auth::user()->id,
-					'coins' =>  $coin
+					'coins' =>  $coin,
+                    'date_time' => date('Y-m-d H:i:s')
 				)
 			);
 
