@@ -17,6 +17,10 @@ class UserController extends Controller
     //
     public function index()
     {
+
+        $count_user = User::where('id', '!=', 1 )->where('id', '!=', 2 )->orderby('id', 'desc')->count();
+        $data['count_user'] = $count_user;
+
         $objs = User::where('id', '!=', 1 )->where('id', '!=', 2 )->orderby('id', 'desc')->paginate(15);
         $data['objs'] = $objs;
         return view('admin.user.index', $data);
