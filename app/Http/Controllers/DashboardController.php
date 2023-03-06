@@ -68,7 +68,7 @@ class DashboardController extends Controller
 
     public function wheel(){
 
-        $objs = \DB::table('wheelsetting')->wherein('id', [1,2,3,4,5,6])->get();
+        $objs = \DB::table('wheelsetting')->wherein('id', [1,2,3,4,5,6,7])->get();
         $data['objs'] = $objs;
 
         $data['sum'] = 1;
