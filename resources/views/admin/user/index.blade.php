@@ -38,7 +38,7 @@ window.gaTitle = 'หน้าแรก';
                 <div class="col-md-12 grid-margin stretch-card">
                   <div class="card">
                     <div class="card-body">
-                      <h4 class="card-title">ผู้ใช้งานทั้งหมด ( {{ count($count_user) }} )</h4>
+                      <h4 class="card-title">ผู้ใช้งานทั้งหมด ( {{ ($count_user) }} )</h4>
 
                       <div class="table-responsive">
 
