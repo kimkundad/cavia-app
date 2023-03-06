@@ -31,6 +31,7 @@ window.gaTitle = 'หน้าแรก';
                         <thead>
 
                           <tr>
+                            <th>#</th>
                             <th>รางวัล</th>
                             <th>ชื่อรางวัล</th>
 							<th>message</th>
@@ -44,6 +45,9 @@ window.gaTitle = 'หน้าแรก';
 						@if(isset($objs))
                       @foreach($objs as $u)
                           <tr>
+                            <td>
+                              {{$u->id}}
+                            </td>
                             <td>
                               {{$u->value}}
                             </td>
