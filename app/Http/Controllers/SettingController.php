@@ -48,6 +48,9 @@ class SettingController extends Controller
             $obj->phone = $request['phone'];
             $obj->email = $request['email'];
             $obj->google_analytic = $request['google_analytic'];
+            $obj->first_day = $request['first_day'];
+            $obj->mid_day = $request['mid_day'];
+            $obj->last_day = $request['last_day'];
             $obj->save();
 
            if($image != NULL){

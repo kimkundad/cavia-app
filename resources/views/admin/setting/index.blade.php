@@ -51,6 +51,28 @@ window.gaTitle = 'หน้าแรก';
           <input type="text" class="form-control" name="get_my_file" value="{{ $objs->get_my_file }}">
         </div>
 
+
+
+        <div class="form-group">
+          <label for="exampleInputUsername1">รับ point วันแรก <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" name="first_day" value="{{ $objs->first_day }}">
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputUsername1">รับ point 2-6 <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" name="mid_day" value="{{ $objs->mid_day }}">
+        </div>
+
+
+        <div class="form-group">
+          <label for="exampleInputUsername1">รับ point วันสุดท้าย <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" name="last_day" value="{{ $objs->last_day }}">
+        </div>
+
+
+
+
+
         <div class="form-group">
           <label for="exampleInputUsername1">ชื่อ facebook <span class="text-danger">*</span></label>
           <input type="text" class="form-control" id="exampleInputUsername1" name="facebook" value="{{ $objs->facebook }}">
