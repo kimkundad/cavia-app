@@ -71,6 +71,42 @@ class ServiceController extends Controller
 
         }
 
+        $package = new point();
+        $package->user_key = Auth::user()->phone;
+        $package->date = date("Y-m-d");
+        $package->total_valid_bet_amount = $point;
+        $package->point = $point;
+        $package->type = 0;
+        $package->detail = 'ได้ Point '.$point.' จากการเช็คอินรายวัน';
+        $package->status = 5;
+        $package->save();
+
+ 
+        $user = User::where('phone', Auth::user()->phone)->first();
+ 
+        //$total_point = $user->point;
+        $total_point = 0;
+ 
+        $objs = point::where('user_key', Auth::user()->phone)->get();
+        
+        foreach($objs as $u){
+             if($u->type == 0){
+                 $total_point += $u->point;
+             }elseif($u->type == 2){
+                 $total_point += $u->point;
+             }else{
+                 $total_point -= $u->point;
+             }
+        }
+ 
+        $ob = point::find($package->id);
+        $ob->last_point = $total_point;
+        $ob->save();
+ 
+        $package = User::find($user->id);
+        $package->point = $total_point;
+        $package->save();
+
         return response()->json(
             [
                 'next_point' => $point_next,
