@@ -83,4 +83,12 @@
 .ps-footer__links p a {
     color: #c7c1c1;
 }
-    </style>
+.chakra-coin{
+  width: 24px;
+  height: 24px;
+}
+.chakra-coin2{
+  width: 20px;
+  height: 20px;
+}
+</style>

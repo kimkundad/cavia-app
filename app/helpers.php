@@ -25,3 +25,34 @@ function setting(){
 
     return $cat;
   }
+
+
+  function first_day(){
+
+    $cat = DB::table('settings')
+          ->where('id', 1)
+          ->first();
+
+    return $cat->first_day;
+
+  }
+
+  function mid_day(){
+
+    $cat = DB::table('settings')
+          ->where('id', 1)
+          ->first();
+
+    return $cat->mid_day;
+    
+  }
+
+  function last_day(){
+
+    $cat = DB::table('settings')
+          ->where('id', 1)
+          ->first();
+
+    return $cat->last_day;
+    
+  }

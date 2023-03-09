@@ -49,6 +49,7 @@
                                         <li><a href="{{ url('account') }}"><i class="icon-user"></i> ข้อมูลบัญชี</a></li>
                                         <li class="active"><a href="{{ url('history') }}"><i class="icon-papers"></i> ประวัติการแลกเปลี่ยน</a></li>
                                         <li><a href="{{ url('my_point') }}"><i class="icon-papers"></i> สะสมแต้ม</a></li>
+                                        {{-- <li><a href="{{ url('point_rewards') }}"><img src="{{ url('/img/coin.png') }}" class="chakra-coin">  Point Rewards</a></li> --}}
                                         <li><a href="{{ url('logout') }}"><i class="icon-power-switch"></i>ออกจากระบบ</a></li>
                                     </ul>
                                 </div>

@@ -6,11 +6,80 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\point;
 use App\Models\User;
+use App\Models\point_reward;
 use Auth;
 
 class ServiceController extends Controller
 {
     //
+
+    public function addPointCheckin(){
+
+        $set = DB::table('settings')
+          ->where('id', 1)
+          ->first();
+
+        $check_point = DB::table('point_rewards')
+        ->where('user_id', Auth::user()->id)
+        ->count();
+
+        $point = 0;
+        $point_next = 0;
+
+        if($check_point == 0){
+
+            $point = $set->first_day;
+            $point_next = $set->mid_day;
+
+            $delobj = new point_reward();
+            $delobj->user_id = Auth::user()->id;
+            $delobj->coins = $set->first_day;
+            $delobj->day = 1;
+            $delobj->point_date = date("Y-m-d");
+            $delobj->status = 1;
+            $delobj->save();
+
+        }
+
+        if($check_point > 0 && $check_point < 6){
+
+            $point = $set->mid_day;
+            $point_next = $set->mid_day;
+
+            $delobj = new point_reward();
+            $delobj->user_id = Auth::user()->id;
+            $delobj->coins = $set->mid_day;
+            $delobj->day = 1;
+            $delobj->point_date = date("Y-m-d");
+            $delobj->status = 1;
+            $delobj->save();
+
+        }
+
+        if($check_point == 6){
+
+            $point = $set->last_day;
+            $point_next = $set->last_day;
+
+            $delobj = new point_reward();
+            $delobj->user_id = Auth::user()->id;
+            $delobj->coins = $set->last_day;
+            $delobj->day = 1;
+            $delobj->point_date = date("Y-m-d");
+            $delobj->status = 1;
+            $delobj->save();
+
+        }
+
+        return response()->json(
+            [
+                'next_point' => $point_next,
+                'status' => 201,
+                'point_return' => $point
+            ]
+        );
+
+    }
     public function addwheelresult(){
 
         $wheelsetting = \DB::table('wheelsetting')->get();

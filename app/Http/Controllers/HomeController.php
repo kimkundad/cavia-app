@@ -78,6 +78,42 @@ class HomeController extends Controller
         return view('spin_wheel', $data);
     }
 
+    public function point_rewards(){
+
+        $set = DB::table('settings')
+          ->where('id', 1)
+          ->first();
+
+        $check_point = DB::table('point_rewards')
+        ->where('user_id', Auth::user()->id)
+        ->where('point_date', date("Y-m-d"))
+        ->count();
+
+        $check_point_day = DB::table('point_rewards')
+        ->where('user_id', Auth::user()->id)
+        ->count();
+
+        $point_return = 0;
+
+        if($check_point_day > 0 && $check_point_day < 6){
+            $point_return = $set->mid_day;
+        }else{
+            $point_return = $set->last_day;
+        }
+     //   dd($check_day);
+
+     $check_day = $check_point_day-$check_point;
+
+    // dd($check_day);
+
+        $data['check_day'] =  $check_day;
+        $data['check_point'] = $check_point;
+        $data['next_day'] = $check_point_day+1;
+        $data['point_return'] = $point_return;
+        $data['check_point_day'] = $check_point_day;
+        return view('account.point_rewards', $data);
+    }
+
     public function addwheelresult(){
 
         return response()->json([

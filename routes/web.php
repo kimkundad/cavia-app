@@ -37,7 +37,8 @@ Route::get('api/data_wheel', [App\Http\Controllers\ServiceController::class, 'da
 Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
 
     Route::get('api/addwheelresult', [App\Http\Controllers\ServiceController::class, 'addwheelresult'])->name('addwheelresult');
-    
+    Route::get('api/addPointCheckin', [App\Http\Controllers\ServiceController::class, 'addPointCheckin'])->name('addPointCheckin');
+
     Route::get('/spin_wheel', [App\Http\Controllers\HomeController::class, 'spin_wheel'])->name('spin_wheel');
     
 
@@ -50,6 +51,7 @@ Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
     Route::get('/payment_success/{id}', [App\Http\Controllers\HomeController::class, 'payment_success'])->name('payment_success');
 
     Route::get('/history', [App\Http\Controllers\HomeController::class, 'history'])->name('history');
+    Route::get('/point_rewards', [App\Http\Controllers\HomeController::class, 'point_rewards'])->name('point_rewards');
 
     Route::get('/invoice_detail/{id}', [App\Http\Controllers\HomeController::class, 'invoice_detail'])->name('invoice_detail');
 
