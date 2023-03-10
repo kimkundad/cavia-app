@@ -29,8 +29,9 @@ window.gaTitle = 'หน้าแรก';
                 <div class="col-md-12 grid-margin stretch-card">
                   <div class="card">
                     <div class="card-body">
-                      <h4 class="card-title">เช็คอินทุกวันเพื่อรับ Points</h4>
-
+                      <h4 class="card-title">เช็คอินทุกวันเพื่อรับ Points ทั้งหมด ( {{ number_format(count($objs), 0) }} )<br>
+                        <span style="font-size:14px; color: #f6a700; ">( จำนวน Point ทั้งหมด {{ number_format($data_checkin, 0) }} )</span></h4>
+                        
                       <div class="table-responsive">
 
 

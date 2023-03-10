@@ -31,6 +31,12 @@ class DashboardController extends Controller
 
         $data['objs'] = $objs;
 
+        $data_checkin = point_reward::where('point_date', date("Y-m-d"))->sum('coins');
+        $data['data_checkin'] = $data_checkin;
+
+        $count_checkin = point_reward::where('point_date', date("Y-m-d"))->count();
+        $data['count_checkin'] = $count_checkin;
+
         $count_wheel = \DB::table('wheel_logs')
             ->whereDate('date_time', date("Y-m-d"))
             ->count();
@@ -106,6 +112,9 @@ class DashboardController extends Controller
 
 
     public function point_checkin(){
+
+        $data_checkin = point_reward::sum('coins');
+        $data['data_checkin'] = $data_checkin;
 
         $objs = DB::table('point_rewards')->select(
             'point_rewards.*',

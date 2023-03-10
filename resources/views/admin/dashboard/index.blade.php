@@ -80,6 +80,15 @@
                         <i class="icon-badge text-primary icon-lg"></i>
                       </div>
                     </div>
+                    <div class="col-md-6 col-lg-3">
+                      <div class="d-flex justify-content-between card-statistics-item">
+                        <div>
+                          <h1 style="font-size:20px">{{ number_format($data_checkin, 0) }}</h1>
+                          <p class="text-muted mb-0">เช็คอินทุกวัน ( {{ number_format($count_checkin, 0) }} / ครั้ง )</p>
+                        </div>
+                        <i class="icon-trophy text-primary icon-lg"></i>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
