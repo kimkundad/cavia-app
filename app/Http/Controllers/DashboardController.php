@@ -11,6 +11,7 @@ use App\Models\point;
 use App\Models\product;
 use App\Models\wheelsetting;
 use App\Imports\UsersImport;
+use App\Models\point_reward;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Jobs\UserUpPoint;
 
@@ -64,6 +65,61 @@ class DashboardController extends Controller
 
         $data['sum'] = 1;
         return view('admin.dashboard.index', $data);
+    }
+
+    public function edit_point_checkin($id){
+
+        $objs = DB::table('point_rewards')->select(
+            'point_rewards.*',
+            'point_rewards.id as id_q',
+            'point_rewards.created_at as created_ats',
+            'users.*'
+            )
+            ->leftjoin('users', 'users.id',  'point_rewards.user_id')->where('point_rewards.id', $id)->first();
+
+        $data['objs'] = $objs;
+        $data['id'] = $id;
+        return view('admin.dashboard.edit_point_checkin', $data);
+
+    }
+
+    public function post_point_checkin(Request $request, $id){
+
+        $this->validate($request, [
+            'point_date' => 'required'
+        ]);
+
+        $package = point_reward::find($id);
+       $package->point_date = $request['point_date'];
+       $package->save();
+
+        return redirect(url('/admin/point_checkin'))->with('edit_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
+
+    }
+
+    public function del_checkin_all(){
+
+        point_reward::truncate();
+
+        return redirect(url('/admin/point_checkin'))->with('edit_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
+    }
+
+
+    public function point_checkin(){
+
+        $objs = DB::table('point_rewards')->select(
+            'point_rewards.*',
+            'point_rewards.id as id_q',
+            'point_rewards.created_at as created_ats',
+            'users.*'
+            )
+            ->leftjoin('users', 'users.id',  'point_rewards.user_id')
+            ->orderby('point_rewards.id', 'desc')
+            ->paginate(10);
+
+        $data['objs'] = $objs;
+
+        return view('admin.dashboard.point_checkin', $data);
     }
 
     public function wheel(){

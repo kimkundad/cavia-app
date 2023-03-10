@@ -114,5 +114,11 @@ Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
     Route::post('api/post_wheel/{id}', [App\Http\Controllers\DashboardController::class, 'post_wheel'])->name('post_wheel');
  
     Route::get('admin/wheel', [App\Http\Controllers\DashboardController::class, 'wheel'])->name('wheel');
-  
+    Route::get('admin/point_checkin', [App\Http\Controllers\DashboardController::class, 'point_checkin'])->name('point_checkin');
+    Route::get('admin/edit_point_checkin/{id}', [App\Http\Controllers\DashboardController::class, 'edit_point_checkin'])->name('edit_point_checkin');
+
+    Route::post('api/post_point_checkin/{id}', [App\Http\Controllers\DashboardController::class, 'post_point_checkin'])->name('post_point_checkin');
+
+    Route::get('api/del_checkin_all', [App\Http\Controllers\DashboardController::class, 'del_checkin_all'])->name('del_checkin_all');
+
 });
