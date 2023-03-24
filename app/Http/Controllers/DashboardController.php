@@ -14,6 +14,8 @@ use App\Imports\UsersImport;
 use App\Models\point_reward;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Jobs\UserUpPoint;
+use App\Exports\PointsExport;
+use App\Exports\OrderExport;
 
 class DashboardController extends Controller
 {
@@ -72,6 +74,18 @@ class DashboardController extends Controller
         $data['sum'] = 1;
         return view('admin.dashboard.index', $data);
     }
+
+
+    public function points_export() 
+    {
+        return Excel::download(new PointsExport, 'point.xlsx');
+    }
+
+    public function orders_export() 
+    {
+        return Excel::download(new OrderExport, 'orders.xlsx');
+    }
+
 
     public function edit_point_checkin($id){
 

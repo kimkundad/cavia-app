@@ -14,7 +14,10 @@ window.gaTitle = 'หน้าแรก';
 
 <div class="row">
                 
-
+  <div class="col-md-12">
+    <a href="{{ url('/orders_export') }}" class="btn btn-success btn-fw" style="float:right"><i class="icon-plus"></i>Export Data</a>
+    <br /><br />
+  </div>
                 
                 <div class="col-md-12 grid-margin stretch-card">
                   <div class="card">

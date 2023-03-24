@@ -13,6 +13,7 @@ use App\Models\point;
 use Session;
 use Auth;
 
+
 class HomeController extends Controller
 {
     /**
@@ -45,6 +46,8 @@ class HomeController extends Controller
 
         return view('welcome', $data);
     }
+
+    
 
     public function spin_wheel(){
 

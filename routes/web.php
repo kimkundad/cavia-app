@@ -29,7 +29,6 @@ Route::get('/upgame_pg', [App\Http\Controllers\HomeController::class, 'upgame_pg
 Route::get('/upgame_allgame1', [App\Http\Controllers\HomeController::class, 'upgame_allgame'])->name('upgame_allgame');
 
 
-
 Route::get('api/data_labelwheel', [App\Http\Controllers\ServiceController::class, 'data_labelwheel'])->name('data_labelwheel');
 
 Route::get('api/data_wheel', [App\Http\Controllers\ServiceController::class, 'data_wheel'])->name('data_wheel');
@@ -82,7 +81,11 @@ Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
 });
 
 Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
-  
+
+
+    Route::get('/points_export', [App\Http\Controllers\DashboardController::class, 'points_export'])->name('points_export');
+    Route::get('/orders_export', [App\Http\Controllers\DashboardController::class, 'orders_export'])->name('orders_export');
+
     Route::post('/import', [App\Http\Controllers\DashboardController::class, 'import'])->name('import');
 
     Route::get('/admin/dashboard', [App\Http\Controllers\DashboardController::class, 'index']);

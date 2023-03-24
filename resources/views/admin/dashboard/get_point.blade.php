@@ -46,6 +46,11 @@ window.gaTitle = 'หน้าแรก';
 </div>
 
 
+<div class="col-md-12">
+  <br /><br />
+  <a href="{{ url('/points_export') }}" class="btn btn-success btn-fw" style="float:right"><i class="icon-plus"></i>Export Data</a>
+  
+</div>
 
 <div class="col-md-12">
   <br><br>
