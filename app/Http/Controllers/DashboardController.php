@@ -212,7 +212,7 @@ class DashboardController extends Controller
             'file' => 'required'
         ]);
 
-        dd(request()->file('file'));
+      //  dd(request()->file('file'));
 
       $data_csv = Excel::import(new UsersImport, request()->file('file'));
      
@@ -249,7 +249,7 @@ class DashboardController extends Controller
     // }
         
 
-     // dd($data_csv);
+      dd($data_csv);
 
         return redirect(url('admin/get_point/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
