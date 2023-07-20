@@ -212,9 +212,25 @@ class DashboardController extends Controller
             'file' => 'required'
         ]);
 
+        $upload = $request->file('file');
+        
+        $filePath = $upload->getRealPath();
+
+        //Read the file
+        $file=fopen($filePath, 'r');
+
+        $header = fgetcsv($file);
+
+        //Loop through the columns
+        while ($columns = fgetcsv($file)){
+
+            $data = array_combine($header, $columns);
+            dd($data);
+        }
+
       //  dd(request()->file('file'));
 
-      $data_csv = Excel::import(new UsersImport, request()->file('file'));
+    //  $data_csv = Excel::import(new UsersImport, request()->file('file'));
      
     //  $user = User::get();
 
@@ -251,7 +267,7 @@ class DashboardController extends Controller
 
      // dd($data_csv);
 
-        return redirect(url('admin/get_point/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+     //   return redirect(url('admin/get_point/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
 
 
