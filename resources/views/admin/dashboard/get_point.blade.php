@@ -19,7 +19,7 @@ window.gaTitle = 'หน้าแรก';
   <br><br>
   <div class="card">
     <div class="card-body">
-    <h4 class="card-title">อัพโหลดไฟล์ CSV</h4>
+    <h4 class="card-title">อัพโหลดไฟล์ CSV.</h4>
 
     <form action="{{ url('import') }}" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
