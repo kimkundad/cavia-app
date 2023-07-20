@@ -16,6 +16,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Jobs\UserUpPoint;
 use App\Exports\PointsExport;
 use App\Exports\OrderExport;
+use App\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class DashboardController extends Controller
 {
@@ -225,7 +227,9 @@ class DashboardController extends Controller
         while ($columns = fgetcsv($file)){
 
             $data = array_combine($header, $columns);
-            dd($data);
+
+            $point_last = DB::table('points')->where('user_key', $data['user_key'])->orderby('id', 'desc')->first();
+            dd($point_last);
         }
 
       //  dd(request()->file('file'));
