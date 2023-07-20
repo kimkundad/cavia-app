@@ -19,7 +19,7 @@ class UsersImport implements ToModel, WithStartRow, WithCustomCsvSettings, WithC
 
     public function startRow(): int
     {
-        return 2;
+        return 0;
     }
 
     public function getCsvSettings(): array
