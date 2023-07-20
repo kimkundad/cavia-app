@@ -35,7 +35,7 @@ class UsersImport implements ToModel, WithStartRow, WithCustomCsvSettings, WithC
     */
     public function model(array $row)
     {
-        return $row[0];
+        dd($row);
         $point_last = DB::table('points')->where('user_key', $row[0])->orderby('id', 'desc')->first();
         $point = 0;
         $get_point = 0;
