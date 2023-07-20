@@ -324,10 +324,10 @@ class DashboardController extends Controller
 
             $point = $point_last->last_point;
             //20
-            $get_point = ($row[2]*(2))/100;
+            $get_point = ($data['total_valid_bet_amount']*(2))/100;
             $point = $point + $get_point;
 
-            if($point_last->date == $row[1]){
+            if($point_last->date == $data['date']){
                 
             }else{
 
@@ -346,7 +346,7 @@ class DashboardController extends Controller
                 $point = 0;
             $get_point = 0;
 
-            $get_point = ($row[2]*(2))/100;
+            $get_point = ($data['total_valid_bet_amount']*(2))/100;
             $point = $get_point;
 
             point::create([
