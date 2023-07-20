@@ -226,10 +226,140 @@ class DashboardController extends Controller
         //Loop through the columns
         while ($columns = fgetcsv($file)){
 
+            //$data['total_valid_bet_amount']
+
             $data = array_combine($header, $columns);
 
             $point_last = DB::table('points')->where('user_key', $data['user_key'])->orderby('id', 'desc')->first();
-            dd($point_last);
+            $point = 0;
+            $get_point = 0;
+            $get_user = User::where('phone', $data['user_key'])->count();
+
+            if(isset($point_last)){
+                if($point_last->date == $data['date']){
+                        
+                }else{
+
+                    $get_point = 0;
+
+            if($get_user > 0){
+
+                $get_point = ($data['total_valid_bet_amount']*(2))/100;
+
+                \DB::table('users')->where('phone', $data['user_key'])->increment('point', $get_point);
+                
+            }else{
+
+                if($get_user == 0){
+
+                $get_point = ($data['total_valid_bet_amount']*(2))/100;
+                $pass = (\random_int(1000, 9999)).''.(\random_int(1000, 9999)).''.(\random_int(10, 99));
+                $ran = array("1483537975.png","1483556517.png","1483556686.png");
+
+                $user = User::create([
+                    'name' => $data['user_key'],
+                    'email' => (\random_int(1000000, 9999999)).'@gmail.com',
+                    'password' => Hash::make($pass),
+                    'is_admin' => false,
+                    'provider' => 'email',
+                    'avatar' => $ran[array_rand($ran, 1)],
+                    'code_user' => $pass,
+                    'phone' => $data['user_key'],
+                    'point' => $get_point,
+                  ]);
+
+                $user
+                ->roles()
+                ->attach(Role::where('name', 'user')->first());
+
+                }
+
+            }
+
+                    
+                }
+            }else{
+
+                $get_point = 0;
+            
+                if($get_user > 0){
+    
+                    $get_point = ($data['total_valid_bet_amount']*(2))/100;
+    
+                    \DB::table('users')->where('phone', $data['user_key'])->increment('point', $get_point);
+                }else{
+    
+                    if($get_user == 0){
+    
+                    $get_point = ($data['total_valid_bet_amount']*(2))/100;
+                    $pass = (\random_int(1000, 9999)).''.(\random_int(1000, 9999)).''.(\random_int(10, 99));
+                    $ran = array("1483537975.png","1483556517.png","1483556686.png");
+    
+                    $user = User::create([
+                        'name' => $data['user_key'],
+                        'email' => (\random_int(1000000, 9999999)).'@gmail.com',
+                        'password' => Hash::make($pass),
+                        'is_admin' => false,
+                        'provider' => 'email',
+                        'avatar' => $ran[array_rand($ran, 1)],
+                        'code_user' => $pass,
+                        'phone' => $data['user_key'],
+                        'point' => $get_point,
+                      ]);
+    
+                    $user
+                    ->roles()
+                    ->attach(Role::where('name', 'user')->first());
+    
+                    }
+    
+                }
+            }
+
+
+            if(isset($point_last)){
+
+                $point = 0;
+            $get_point = 0;
+
+            $point = $point_last->last_point;
+            //20
+            $get_point = ($row[2]*(2))/100;
+            $point = $point + $get_point;
+
+            if($point_last->date == $row[1]){
+                
+            }else{
+
+                point::create([
+                    'user_key'  => $data['user_key'],
+                    'date'  =>  $data['date'],
+                    'total_valid_bet_amount'  =>  $data['total_valid_bet_amount'],
+                    'point'  => $get_point,
+                    'last_point'  => $point,
+                  ]);
+
+            }
+
+            }else{
+
+                $point = 0;
+            $get_point = 0;
+
+            $get_point = ($row[2]*(2))/100;
+            $point = $get_point;
+
+            point::create([
+                'user_key'  => $data['user_key'],
+                'date'  =>  $data['date'],
+                'total_valid_bet_amount'  =>  $data['total_valid_bet_amount'],
+                'point'  => $get_point,
+                'last_point'  => $point,
+              ]);
+
+
+            }
+
         }
 
       //  dd(request()->file('file'));
@@ -271,7 +401,7 @@ class DashboardController extends Controller
 
      // dd($data_csv);
 
-     //   return redirect(url('admin/get_point/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+        return redirect(url('admin/get_point/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
 
 
