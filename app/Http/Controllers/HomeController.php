@@ -107,7 +107,7 @@ class HomeController extends Controller
 
      $check_day = $check_point_day-$check_point;
 
-    // dd($check_day);
+    // dd($check_point_day);
 
         $data['check_day'] =  $check_day;
         $data['check_point'] = $check_point;

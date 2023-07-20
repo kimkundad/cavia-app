@@ -205,9 +205,38 @@
                                         <h2 class="text-white" id="my_point_old">{{number_format((float)Auth::user()->point, 0, '.', '')}}</h2>
                                     </div>
                                     
+                                    
                                     <div class="card-wh">
                                         <div class="d-flex justify-content-center">
+
+                                            @for ($i = 1; $i <= 7; $i++)
+
                                             <div class="pcmall">
+                                                <div class="pcmall-dailycheckin 
+                                                @if($i <= $check_point_day)
+                                                active
+                                                @endif
+                                                ">
+                                                    <div class="pcmall-point">
+                                                        @if($i == 1)
+                                                        +{{first_day()}}
+                                                        @elseif($i > 1 && $i < 7)
+                                                        +{{mid_day()}}
+                                                        @else
+                                                        +{{last_day()}}
+                                                        @endif
+                                                    </div>
+                                                    <img src="{{ url('/img/coin.png') }}" class="chakra-coin mt-10">
+                                                </div>
+                                                <span>วันที่ {{$i}}</span>
+                                            </div>
+
+                                            @endfor
+
+                                  
+
+
+                                            {{-- <div class="pcmall">
                                                 <div class="pcmall-dailycheckin 
                                                 @if($check_point_day == 0 || $check_point_day > 0)
                                                 active
@@ -297,7 +326,8 @@
                                                     <img src="{{ url('/img/coin.png') }}" class="chakra-coin mt-10">
                                                 </div>
                                                 <span>วันที่ 7</span>
-                                            </div>
+                                            </div> --}}
+
                                         </div>
                                         <button class="pcmall-dailycheckin_btn" id="dailycheckin_btn" 
                                         @if($check_point == 0)

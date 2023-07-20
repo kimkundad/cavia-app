@@ -39,6 +39,8 @@ class UsersImport implements ToModel, WithStartRow, WithCustomCsvSettings, WithC
         $point = 0;
         $get_point = 0;
 
+        $get_userx = User::where('phone', $row[0])->first();
+        dd($get_userx);
         $get_user = User::where('phone', $row[0])->count();
 
         if(isset($point_last)){

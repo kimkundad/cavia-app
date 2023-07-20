@@ -398,6 +398,7 @@ let count = 0;
 let resultValue = 101;
 //Start spinning
 
+console.log('rotation0----',  myChart.options.rotation)
 
 spinBtn.addEventListener("click", () => {
   
@@ -411,7 +412,7 @@ spinBtn.addEventListener("click", () => {
     
     if(res2.status == 201){
     randomDegree = Math.floor(Math.random() * (res2.data.maxDegree - res2.data.minDegree) + res2.data.minDegree);
-    console.log('status----', res2.status)
+    console.log('rotation1----',  myChart.options.rotation)
 
 
       spinBtn.disabled = true;
@@ -427,6 +428,7 @@ spinBtn.addEventListener("click", () => {
     Initially to make the piechart rotate faster we set resultValue to 101 so it rotates 101 degrees at a time and this reduces by 1 with every count. Eventually on last rotation we rotate by 1 degree at a time.
     */
     myChart.options.rotation = myChart.options.rotation + resultValue;
+    console.log('rotation2----',  myChart.options.rotation)
     //Update chart with new value;
     myChart.update();
     //If rotation>360 reset it back to 0
