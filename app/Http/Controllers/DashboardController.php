@@ -365,7 +365,7 @@ class DashboardController extends Controller
       //  dd(request()->file('file'));
 
       $data_csv = Excel::import(new UsersImport, request()->file('file'));
-     
+      dd($data_csv);
     //  $user = User::get();
 
     //   if(isset($user)){
