@@ -129,7 +129,7 @@ class UserController extends Controller
         $package->point = $point_final->last_point;
         $package->save();
 
-        return redirect(url('admin/users/'.$user->id.'/edit'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+        return redirect(url('admin/users/'.$id.'/edit'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
 
     public function del_point_user_2($id){
