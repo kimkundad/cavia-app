@@ -99,6 +99,8 @@ Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
     Route::post('admin/add_point_user/{id}', [App\Http\Controllers\UserController::class, 'add_point_user'])->name('add_point_user');
     Route::get('api/del_point_user/{id}', [App\Http\Controllers\UserController::class, 'del_point_user'])->name('del_point_user');
 
+    Route::get('api/update_point/{id}', [App\Http\Controllers\UserController::class, 'update_point'])->name('update_point');
+
     Route::get('admin/user_search', [App\Http\Controllers\UserController::class, 'user_search']);
 
     Route::resource('/admin/slide_show', App\Http\Controllers\SlideController::class);

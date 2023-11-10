@@ -341,6 +341,7 @@ class DashboardController extends Controller
 
             }
 
+            
             }else{
 
                 $point = 0;

@@ -63,8 +63,8 @@ window.gaTitle = 'หน้าแรก';
 
         <div style="text-align: right;">
         <br /><br /><br />
+        <a class="btn btn-light" href="{{ url('api/update_point/'.$objs->id) }}">Reset Point</a>
         <button type="submit" class="btn btn-primary mr-2">บันทึก</button>
-        <button class="btn btn-light">ยกเลิก</button>
         </div>
 
       </form>

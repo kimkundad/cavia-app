@@ -114,11 +114,22 @@ class UserController extends Controller
         $point = point::where('user_key', $obj->phone)->orderby('id', 'desc')->paginate(15);
         $data['point'] = $point;
 
-        $point_final = point::where('user_key', $obj->phone)->orderby('id', 'desc')->first();
-
       //  dd($point_final);
         $data['objs'] = $obj;
         return view('admin.user.edit', $data);
+    }
+
+
+    public function update_point($id){
+
+        $obj = User::find($id);
+        $point_final = point::where('user_key', $obj->phone)->orderby('id', 'desc')->first();
+
+        $package = User::find($id);
+        $package->point = $point_final->last_point;
+        $package->save();
+
+        return redirect(url('admin/users/'.$user->id.'/edit'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
 
     public function del_point_user_2($id){
