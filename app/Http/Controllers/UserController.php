@@ -107,7 +107,6 @@ class UserController extends Controller
 
        $data['cat2'] = $cat2;
 
-
         $obj = User::find($id);
         $data['url'] = url('admin/users/'.$id);
         $data['method'] = "put";
@@ -117,7 +116,7 @@ class UserController extends Controller
 
         $point_final = point::where('user_key', $obj->phone)->orderby('id', 'desc')->first();
 
-        dd($point_final);
+      //  dd($point_final);
         $data['objs'] = $obj;
         return view('admin.user.edit', $data);
     }
