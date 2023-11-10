@@ -100,6 +100,7 @@ class UserController extends Controller
     {
         //
 
+
         $cat2 = DB::table('role_user')
        ->where('user_id', $id)
        ->first();
@@ -114,7 +115,9 @@ class UserController extends Controller
         $point = point::where('user_key', $obj->phone)->orderby('id', 'desc')->paginate(15);
         $data['point'] = $point;
 
-       // dd($obj);
+        $point_final = point::where('user_key', $obj->phone)->orderby('id', 'desc')->first();
+
+        dd($point_final);
         $data['objs'] = $obj;
         return view('admin.user.edit', $data);
     }
