@@ -35,6 +35,8 @@ Route::get('api/data_wheel', [App\Http\Controllers\ServiceController::class, 'da
 
 Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
 
+    Route::get('/checkout_product/{id}', [App\Http\Controllers\HomeController::class, 'checkout_product'])->name('checkout_product');
+
     Route::get('api/addwheelresult', [App\Http\Controllers\ServiceController::class, 'addwheelresult'])->name('addwheelresult');
     Route::get('api/addPointCheckin', [App\Http\Controllers\ServiceController::class, 'addPointCheckin'])->name('addPointCheckin');
 
@@ -57,6 +59,8 @@ Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
     Route::get('/account', [App\Http\Controllers\HomeController::class, 'account'])->name('account');
 
     Route::post('/add_my_order', [App\Http\Controllers\HomeController::class, 'add_my_order'])->name('add_my_order');
+    Route::post('/add_my_order_product', [App\Http\Controllers\HomeController::class, 'add_my_order_product'])->name('add_my_order_product');
+    
 
     Route::post('/update_user', [App\Http\Controllers\HomeController::class, 'update_user'])->name('update_user');
 

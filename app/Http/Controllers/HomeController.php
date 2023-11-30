@@ -225,6 +225,124 @@ class HomeController extends Controller
         return view('modal', $data);
     }
 
+    public function add_my_order_product(Request $request){
+
+        $this->validate($request, [
+            'name_order' => 'required',
+            'telephone_order' => 'required',
+            'address' => 'required'
+        ]);
+
+        $pro = product::where('id', $request->proid)->first();
+
+        if($pro){
+
+            $total = (int) $pro->point;
+            $user_point = (int) Auth::user()->point;
+
+            if($total > $user_point){
+                return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error','เพิ่ม เสร็จเรียบร้อยแล้ว');
+            }
+
+            $api_date = date("YmdHi");
+
+            $randomSixDigitInt = $api_date.''.Auth::user()->id.''.$total.''.Auth::user()->id;
+
+            $order_check = order::where('order_no', $randomSixDigitInt)->count();
+            if($order_check == 0){
+
+
+                $package = new order();
+                $package->user_id = Auth::user()->id;
+                $package->name_order = $request['name_order'];
+                $package->order_no = $randomSixDigitInt;
+                $package->telephone_order = $request['telephone_order'];
+                $package->address = $request['address'];
+                $package->sum_point = $total;
+                $package->note = $request['note'];
+                $package->save();
+
+                $the_id = $package->id;
+
+                // $user = User::where('id', Auth::user()->id)->first();
+                $mypoint = ($user_point - $total);
+
+                DB::table('users')
+                    ->where('id', Auth::user()->id)
+                    ->update(['point' => $mypoint]);
+
+                    DB::table('orders')
+                    ->where('id', $the_id)
+                    ->update(['old_point' => Auth::user()->point]);
+
+                    $package1 = new point();
+                    $package1->user_key = Auth::user()->phone;
+                    $package1->date = date('Y-m-d');
+                    $package1->total_valid_bet_amount = 0;
+                    $package1->point = $request['total'];
+                    $package1->type = 1;
+                    $package1->last_point = $mypoint;
+                    $package1->detail = 'แลกของรางวัล ออเดอร์ '.$randomSixDigitInt;
+                    $package1->save();
+
+                    $obj = new order_detail();
+                    $obj->user_id = Auth::user()->id;
+                    $obj->order_no = $the_id;
+                    $obj->pro_id = $pro->id;
+                    $obj->amount = 1;
+                    $obj->pro_name = $pro->name;
+                    $obj->pro_point = $pro->point;
+                    $obj->pro_image = $pro->image;
+                    $obj->save();
+
+                    $total_pro = ($pro->stock - 1);
+
+                    DB::table('products')
+                    ->where('id', $pro->id)
+                    ->update(['stock' => $total_pro]);
+
+
+                    $message = "มีรายการแลกสินค้าจาก  ".$package->name_order.", ข้อมูลผู้ติดต่อ : ".$package->telephone_order." หมายเลขสั่งซื้อ : ".$randomSixDigitInt." จำนวนพอยท์ : ".$package->sum_point;
+                    $lineapi = env('line_token'); 
+                    
+
+                    $mms =  trim($message);
+                    $chOne = curl_init();
+                    curl_setopt($chOne, CURLOPT_URL, "https://notify-api.line.me/api/notify");
+                    curl_setopt($chOne, CURLOPT_SSL_VERIFYHOST, 0);
+                    curl_setopt($chOne, CURLOPT_SSL_VERIFYPEER, 0);
+                    curl_setopt($chOne, CURLOPT_POST, 1);
+                    curl_setopt($chOne, CURLOPT_POSTFIELDS, "message=$mms");
+                    curl_setopt($chOne, CURLOPT_FOLLOWLOCATION, 1);
+                    $headers = array('Content-type: application/x-www-form-urlencoded', 'Authorization: Bearer '.$lineapi.'',);
+                    curl_setopt($chOne, CURLOPT_HTTPHEADER, $headers);
+                    curl_setopt($chOne, CURLOPT_RETURNTRANSFER, 1);
+                    $result = curl_exec($chOne);
+                    if(curl_error($chOne)){
+                    echo 'error:' . curl_error($chOne);
+                    }else{
+                    $result_ = json_decode($result, true);
+            
+                    }
+                    curl_close($chOne);
+
+                    return redirect(url('payment_success/'.$randomSixDigitInt))->with('pay_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
+
+            }else{
+
+                return redirect(url('payment_success/'.$randomSixDigitInt))->with('pay_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
+            }
+
+
+
+        }else{
+            return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error','เพิ่ม เสร็จเรียบร้อยแล้ว');
+        }
+
+        
+
+    }
+
     public function add_my_order(Request $request){
 
         $this->validate($request, [
@@ -269,6 +387,8 @@ class HomeController extends Controller
             ->where('id', $the_id)
             ->update(['old_point' => Auth::user()->point]);
 
+            /////1
+
           $last = 0;
 
           $point_last = DB::table('points')->where('user_key', Auth::user()->phone)->orderby('id', 'desc')->first();
@@ -289,6 +409,8 @@ class HomeController extends Controller
           $package1->last_point = $last;
           $package1->detail = 'แลกของรางวัล ออเดอร์ '.$randomSixDigitInt;
           $package1->save();
+
+          //2
 
           $cart = Session::get('cart');
  
@@ -371,6 +493,18 @@ class HomeController extends Controller
 
     }
 
+    public function checkout_product($id){
+
+        $product = DB::table('products')
+            ->where('products.id', $id)
+            ->first();
+
+        $data['product'] = $product;
+
+        return view('checkout_product', $data);
+
+    }
+
 
     public function add_to_checkout($id){
 
@@ -381,17 +515,12 @@ class HomeController extends Controller
     $total = (int) $product->point;
     $user_point = (int) Auth::user()->point;
 
-    dd($total);
-
-    if($total > Auth::user()->point){
+    if($total > $user_point){
         return redirect(url('/'))->with('error_point','คุณทำการเพิ่มอสังหา สำเร็จ');
     }else{
 
         return redirect(url('checkout_product/'.$id))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
-
-    
-}
-
+    }
     }
 
 
