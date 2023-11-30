@@ -14,7 +14,7 @@
                                 <h4 class="ps-product__price">Point {{number_format($objs->point)}}</h4>
                                 
                                 <div class="ps-product__shopping">
-                                    <button type="submit" class="ps-btn ps-btn--black" href="#">หยิบใส่ตะกร้า</button>
+                                    {{-- <button type="submit" class="ps-btn ps-btn--black" href="#">หยิบใส่ตะกร้า</button> --}}
                                     <a class="ps-btn" href="{{ url('add_to_checkout/'.$objs->id) }}">แลกของรางวัล</a>
                                 </div>
                             </form>

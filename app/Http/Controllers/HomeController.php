@@ -374,39 +374,61 @@ class HomeController extends Controller
 
     public function add_to_checkout($id){
 
-        $product = DB::select('select * from products where id='.$id);
-    $cart = Session::get('cart');
+        $product = DB::table('products')
+            ->where('products.id', $id)
+            ->first();
 
-    $total = $product[0]->point;
+    $total = (int) $product->point;
+    $user_point = (int) Auth::user()->point;
 
-    if(isset($cart)){
-        foreach($cart as $product_item){
-            $total += ($product_item['point']);
-        }
-    }
-    
+    dd($total);
 
     if($total > Auth::user()->point){
         return redirect(url('/'))->with('error_point','คุณทำการเพิ่มอสังหา สำเร็จ');
     }else{
 
+        return redirect(url('checkout_product/'.$id))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+
     
-
-    $cart[$product[0]->id] = array(
-        "id" => $product[0]->id,
-        "name_product" => $product[0]->name,
-        "point" => $product[0]->point,
-        "image" => $product[0]->image,
-        "qty" => 1,
-    );
-
-    Session::put('cart', $cart);
 }
 
-    return redirect(url('/checkout'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
-
-
     }
+
+
+//     public function add_to_checkout($id){
+
+//         $product = DB::select('select * from products where id='.$id);
+//     $cart = Session::get('cart');
+
+//     $total = $product[0]->point;
+
+//     if(isset($cart)){
+//         foreach($cart as $product_item){
+//             $total += ($product_item['point']);
+//         }
+//     }
+    
+
+//     if($total > Auth::user()->point){
+//         return redirect(url('/'))->with('error_point','คุณทำการเพิ่มอสังหา สำเร็จ');
+//     }else{
+
+    
+
+//     $cart[$product[0]->id] = array(
+//         "id" => $product[0]->id,
+//         "name_product" => $product[0]->name,
+//         "point" => $product[0]->point,
+//         "image" => $product[0]->image,
+//         "qty" => 1,
+//     );
+
+//     Session::put('cart', $cart);
+// }
+
+//     return redirect(url('/checkout'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+
+//     }
 
     public function add_session_value(Request $request){
 
