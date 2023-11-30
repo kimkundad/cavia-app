@@ -137,7 +137,7 @@ class UserController extends Controller
 
         $objs = point::where('user_key', $obj->phone)->get();
 
-        dd($objs);
+      //  dd($objs);
         $total_point = 0;
         foreach($objs as $u){
             if($u->type == 0){
