@@ -129,6 +129,10 @@ window.gaTitle = 'หน้าแรก';
       </form>
     </div>
   </div>
+  <div>
+    ยอด + : {{ $sumpoint }}<br>
+    ยอด- : {{ $sumpointdel }}<br>
+  </div>
 </div>
 
 

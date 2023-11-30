@@ -114,6 +114,12 @@ class UserController extends Controller
         $point = point::where('user_key', $obj->phone)->orderby('id', 'desc')->paginate(15);
         $data['point'] = $point;
 
+        $sumpoint = point::where('user_key', $obj->phone)->where('type', 0)->where('type', 2)->sum('point');
+        $data['sumpoint'] = $sumpoint;
+
+        $sumpointdel = point::where('user_key', $obj->phone)->where('type', 1)->sum('point');
+        $data['sumpointdel'] = $sumpointdel;
+
       //  dd($point_final);
         $data['objs'] = $obj;
         return view('admin.user.edit', $data);
