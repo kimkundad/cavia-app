@@ -104,7 +104,7 @@
                                                 </table>
                                                
                                              
-                                                <h3>Total Point<span> {{ number_format((float)$product->pointl, 0, '.', '') }}</span></h3>
+                                                <h3>Total Point<span> {{ number_format((float)$product->point, 0, '.', '') }}</span></h3>
                                             </div>
                                             <input class="form-control" type="hidden" name="total" value="{{ $product->point }}">
                                             <input class="form-control" type="hidden" name="proid" value="{{ $product->id }}">
