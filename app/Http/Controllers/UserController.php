@@ -138,14 +138,25 @@ class UserController extends Controller
         $objs = point::where('user_key', $obj->phone)->get();
 
         dd($objs);
-
+        $total_point = 0;
         foreach($objs as $u){
-            // if($u->type == 0){
-            //     $total_point += $u->point;
-            // }else{
-            //     $total_point -= $u->point;
-            // }
+            if($u->type == 0){
+                $total_point += $u->point;
+            }elseif($u->type == 2){
+                $total_point += $u->point;
+            }else{
+                $total_point -= $u->point;
+            }
+
+            $ob = point::find($u->id);
+            $ob->last_point = $total_point;
+            $ob->save();
+
        }
+
+       $package = User::find($id);
+        $package->point = $total_point;
+        $package->save();
 
         return redirect(url('admin/users/'.$id.'/edit'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
