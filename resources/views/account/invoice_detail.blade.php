@@ -144,7 +144,7 @@
                                                     </td>
                                                     <td><span> {{ number_format((float)$u->pro_point, 0, '.', '') }}</span></td>
                                                     <td>{{ $u->amount }}</td>
-                                                    <td><span> {{ number_format((float)$objs->last_point, 0, '.', '') }}</span></td>
+                                                    <td><span> {{ number_format((float)Auth::user()->point, 0, '.', '') }}</span></td>
                                                 </tr>
                                                 @endforeach
                                                 @endif
