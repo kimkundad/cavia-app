@@ -128,12 +128,24 @@ class UserController extends Controller
 
     public function update_point($id){
 
-        $obj = User::find($id);
-        $point_final = point::where('user_key', $obj->phone)->orderby('id', 'desc')->first();
+         $obj = User::find($id);
+        // $point_final = point::where('user_key', $obj->phone)->orderby('id', 'desc')->first();
 
-        $package = User::find($id);
-        $package->point = $point_final->last_point;
-        $package->save();
+        // $package = User::find($id);
+        // $package->point = $point_final->last_point;
+        // $package->save();
+
+        $objs = point::where('user_key', $obj->phone)->get();
+
+        dd($objs);
+
+        foreach($objs as $u){
+            // if($u->type == 0){
+            //     $total_point += $u->point;
+            // }else{
+            //     $total_point -= $u->point;
+            // }
+       }
 
         return redirect(url('admin/users/'.$id.'/edit'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
