@@ -130,8 +130,8 @@ window.gaTitle = 'หน้าแรก';
     </div>
   </div>
   <div>
-    ยอด + : {{ $sumpoint }}<br>
-    ยอด- : {{ $sumpointdel }}<br>
+    ยอด + :  {{ number_format($sumpoint, 0) }} <br>
+    ยอด- :  {{ number_format($sumpointdel, 0) }} <br>
   </div>
 </div>
 
