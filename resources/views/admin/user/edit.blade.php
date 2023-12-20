@@ -159,7 +159,7 @@ window.gaTitle = 'หน้าแรก';
                       @if(isset($point))
                       @foreach($point as $u)
                         <tr>
-                          <td>{{ ($u->created_at) }}</td>
+                          <td>{{ ($u->date) }}</td>
                           <td>@if($u->type == 1)
                                                         {{ $u->detail }}
                                                         @elseif($u->type == 2)
