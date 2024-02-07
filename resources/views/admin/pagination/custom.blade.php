@@ -1,5 +1,6 @@
 @if ($paginator->hasPages())
 <nav>
+    <ul class="pagination flex-wrap">
     @if ($paginator->onFirstPage())
         <li class="page-item disabled"><span><i class="icon-arrow-left"></i> Previous</span></li>
     @else
@@ -24,5 +25,7 @@
     @else
         <li class="page-item disabled"><span>Next <i class="icon-arrow-right"></i></span></li>
     @endif
+</ul>
 </nav>
 @endif 
+
