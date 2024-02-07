@@ -95,9 +95,8 @@ window.gaTitle = 'หน้าแรก';
                     </table>
                   </div>
 
-                  @include('admin.pagination.default', ['paginator' => $point])
+                  {{ $point->links() }}
             
-
 
     </div>
   </div>
