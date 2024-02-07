@@ -429,7 +429,7 @@ class DashboardController extends Controller
             )
             ->leftjoin('users', 'users.phone', 'points.user_key')
             ->orderby('points.id', 'desc')
-            ->paginate(20);
+            ->paginate(20)->onEachSide(2);
             
 
         $data['point_count'] = $point_count;
