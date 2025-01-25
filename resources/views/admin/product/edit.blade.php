@@ -55,7 +55,7 @@ window.gaTitle = 'หน้าแรก';
         <div class="form-group">
           <br />
           <label for="exampleInputUsername1">รูปบทความ <span class="text-danger">*</span></label><br />
-          <img src="{{ url('assets/img/products/'.$objs->image) }}" style="width: 450px; border: 2px solid #439aff;" >
+          <img src="{{ $objs->image }}" style="width: 450px; border: 2px solid #439aff;" >
            <br /><br />
           <label for="exampleInputUsername1">แก้ไขรูปบทความ <span class="text-danger">*</span></label>
           <input type="file" class="dropify"  name="image" />
@@ -78,9 +78,9 @@ window.gaTitle = 'หน้าแรก';
             </select>
         </div>
 
-    
-        
-        
+
+
+
         <br />
 
 

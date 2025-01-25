@@ -44,12 +44,12 @@ window.gaTitle = 'หน้าแรก';
                           </tr>
                         </thead>
                         <tbody>
-                      
+
 						@if(isset($objs))
                       @foreach($objs as $u)
                           <tr access_id="{{$u->id}}">
                             <td>
-                            <img src="{{ url('img/slide/'.$u->image) }}" >
+                            <img src="{{ $u->image }}" >
                             </td>
                             <td>
                               {{$u->title}}

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Facades\DB;
 use App\Models\product;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -24,6 +25,58 @@ class ProductController extends Controller
         return view('admin.product.index', $data);
     }
 
+
+    private function deleteOldFile($fileUrl, $path)
+    {
+        if ($fileUrl) {
+            // Convert full URL to relative path
+            $relativePath = str_replace('https://kingbar.sgp1.cdn.digitaloceanspaces.com/', '', $fileUrl);
+
+            // Delete the file from DigitalOcean Spaces
+            Storage::disk('do_spaces')->delete($relativePath);
+        }
+    }
+
+
+        private function uploadImage($image, $path)
+        {
+            if ($image) {
+                // ตรวจสอบชนิดไฟล์
+                $extension = $image->getClientOriginalExtension();
+
+                // Generate unique filename
+                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $image->getClientOriginalName());
+
+                if (strtolower($extension) === 'gif') {
+                    // อัปโหลด GIF โดยไม่ปรับขนาด
+                    Storage::disk('do_spaces')->putFileAs(
+                        $path,
+                        $image,
+                        $filename,
+                        'public'
+                    );
+                } else {
+                    // Resize and prepare the image for non-GIF files
+                    $img = Image::make($image->getRealPath());
+                    $img->resize(800, 800, function ($constraint) {
+                        $constraint->aspectRatio(); // Keep aspect ratio
+                    });
+                    $img->stream(); // Stream the resized image
+
+                    Storage::disk('do_spaces')->put(
+                        "$path/$filename",
+                        $img->__toString(),
+                        'public'
+                    );
+                }
+
+                // Return the file URL
+                return "https://kingbar.sgp1.cdn.digitaloceanspaces.com/$path/$filename";
+            }
+
+            return null;
+        }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -41,21 +94,21 @@ class ProductController extends Controller
     public function product_status(Request $request){
 
         //  dd($request->all());
-    
+
           $user = product::findOrFail($request->user_id);
-    
+
                   if($user->status == 1){
                       $user->status = 0;
                   } else {
                       $user->status = 1;
                   }
-    
+
           return response()->json([
           'data' => [
             'success' => $user->save(),
           ]
         ]);
-    
+
         }
 
     /**
@@ -78,18 +131,17 @@ class ProductController extends Controller
             'image' => 'required'
         ]);
 
-        $path = 'assets/img/products/';
-        $filename = time()."-".$image->getClientOriginalName();
-        $image->move($path, $filename);
+        $filename = $this->uploadImage($request->file('image'), 'cv168point/product');
 
-      $package = new product();
-      $package->name = $request['name'];
-      $package->detail = $request['detail'];
-      $package->stock = $request['stock'];
-      $package->image = $filename;
-      $package->point = $request['point'];
-      $package->status_2 = $request['status_2'];
-      $package->save();
+    // Save product
+    $product = new product();
+    $product->name = $request->input('name');
+    $product->detail = $request->input('detail');
+    $product->stock = $request->input('stock');
+    $product->point = $request->input('point');
+    $product->status_2 = $request->input('status_2');
+    $product->image = $filename; // Store image URL
+    $product->save();
 
       return redirect(url('admin/product/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
@@ -144,36 +196,30 @@ class ProductController extends Controller
             'stock' => 'required'
         ]);
 
-        if($image != NULL){
+        // ค้นหา Product
+    $product = product::findOrFail($id);
 
-            $objs = DB::table('products')
-               ->where('id', $id)
-               ->first();
+    // Update image if provided
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
 
-               if(isset($objs->image)){
-                $file_path = 'assets/img/products/'.$objs->image;
-                 unlink($file_path);
-               }
-
-
-                 $path = 'assets/img/products/';
-            $filename = time()."-".$image->getClientOriginalName();
-            $image->move($path, $filename);
-
-          $package = product::find($id);
-          $package->image = $filename;
-          $package->save();
-
-
+        // ลบไฟล์เก่า
+        if ($product->image) {
+            $this->deleteOldFile($product->image, 'cv168point/product');
         }
-        
-        $package = product::find($id);
-        $package->name = $request['name'];
-        $package->detail = $request['detail'];
-        $package->stock = $request['stock'];
-        $package->point = $request['point'];
-        $package->status_2 = $request['status_2'];
-        $package->save();
+
+        // อัปโหลดไฟล์ใหม่
+        $filename = $this->uploadImage($image, 'cv168point/product');
+        $product->image = $filename;
+    }
+
+    // Update product details
+    $product->name = $request->input('name');
+    $product->detail = $request->input('detail');
+    $product->stock = $request->input('stock');
+    $product->point = $request->input('point');
+    $product->status_2 = $request->input('status_2', false);
+    $product->save();
 
       return redirect(url('admin/product/'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
 
@@ -187,19 +233,22 @@ class ProductController extends Controller
      */
     public function del_product($id)
     {
-        //
+        try {
+            // ค้นหา Product
+            $product = Product::findOrFail($id);
 
-        $objs = DB::table('products')
-            ->where('id', $id)
-            ->first();
-
-            if(isset($objs->image)){
-              $file_path = 'assets/img/products/'.$objs->image;
-               unlink($file_path);
+            // ลบไฟล์ภาพถ้ามี
+            if ($product->image) {
+                $this->deleteOldFile($product->image, 'cv168point/product');
             }
-            
 
-             DB::table('products')->where('id', $id)->delete();
-             return redirect(url('admin/product'))->with('del_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+            // ลบข้อมูลจากฐานข้อมูล
+            $product->delete();
+
+            return redirect(url('admin/product/'))->with('del_success', 'ลบข้อมูลสำเร็จ!');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors('เกิดข้อผิดพลาด: ' . $e->getMessage());
+        }
     }
+
 }

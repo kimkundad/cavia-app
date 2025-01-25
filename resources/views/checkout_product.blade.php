@@ -8,7 +8,7 @@
 
 <style>
     .ps-block__header p {
-       color:#000 
+       color:#000
     }
 </style>
 
@@ -44,7 +44,7 @@
                                             <input class="form-control" type="text" name="name_order">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group">
                                         <label>เบอร์โทรศัพท์<sup>*</sup>
                                         </label>
@@ -52,9 +52,9 @@
                                             <input class="form-control" type="text" name="telephone_order">
                                         </div>
                                     </div>
-                                    
-                                    
-                                    
+
+
+
                                     <div class="form-group">
                                         <label>ที่อยู่ในการจัดส่ง<sup>*</sup>
                                         </label>
@@ -62,7 +62,7 @@
                                         <textarea class="form-control" rows="4" name="address" placeholder="บ้านเลขที่ เขต จังหวัด รหัสไปรษณีย์..."></textarea>
                                         </div>
                                     </div>
-                                 
+
                                     <h3 class="mt-40"> ข้อมูลเพิ่มเติม</h3>
                                     <div class="form-group">
                                         <label>หมายเหตุการสั่งซื้อ</label>
@@ -77,7 +77,7 @@
                                     <h3 class="ps-form__heading">รายการแลกของคุณ</h3>
                                     <div class="content">
                                         <div class="ps-block--checkout-total">
-                                            
+
                                             <div class="ps-block__content">
 
                                             <?php
@@ -102,13 +102,14 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                               
-                                             
+
+
                                                 <h3>Total Point<span> {{ number_format((float)$product->point, 0, '.', '') }}</span></h3>
                                             </div>
                                             <input class="form-control" type="hidden" name="total" value="{{ $product->point }}">
                                             <input class="form-control" type="hidden" name="proid" value="{{ $product->id }}">
-                                        </div><button type="submit" class="ps-btn ps-btn--fullwidth" href="{{ url('payment_success') }}">แลกของรางวัล</button>
+                                        </div>
+                                        <button type="submit" class="ps-btn ps-btn--fullwidth" id="submitButton">แลกของรางวัล</button>
                                     </div>
                                 </div>
                             </div>
@@ -125,4 +126,20 @@
 @endsection
 
 @section('scripts')
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const submitButton = document.getElementById('submitButton');
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', () => {
+            // Disable the button to prevent multiple clicks
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'กำลังดำเนินการ...'; // แสดงข้อความระหว่างประมวลผล
+        });
+    });
+</script>
+
+
 @stop('scripts')

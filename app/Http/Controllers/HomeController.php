@@ -47,7 +47,7 @@ class HomeController extends Controller
         return view('welcome', $data);
     }
 
-    
+
 
     public function spin_wheel(){
 
@@ -134,7 +134,7 @@ class HomeController extends Controller
         $newsData = json_decode($response);
 
         $uses = [];
-  
+
         foreach($newsData->ListGames as $item) { //foreach element in $arr
                 echo $item->GameCode; //etc
         }
@@ -154,7 +154,7 @@ class HomeController extends Controller
         $newsData = json_decode($response);
 
         $uses = [];
-  
+
         foreach($newsData->gameList as $item) { //foreach element in $arr
                 echo $item->gameID; //etc
         }
@@ -174,7 +174,7 @@ class HomeController extends Controller
       //  \DB::connection('mysql2')->table('gamelists')->where('partner', 'jk')->update(['active' => 0]);
 
        \DB::connection('mysql2')->table('gamelists')->whereIn('partner', ['BNG', 'BPG', 'EVP', 'FNG', 'GA'])->update(['active' => 0]);
-  
+
         foreach($newsData->items as $item) { //foreach element in $arr
                // echo $item->name; //etc
                \DB::connection('mysql2')->table('gamelists')->where('code', $item->id)->whereIn('partner', ['BNG', 'BPG', 'EVP', 'FNG', 'GA'])->update(['active' => 1]);
@@ -190,7 +190,7 @@ class HomeController extends Controller
 
                     \DB::connection('mysql2')->table('gamelists')->insert(
                         array(
-                                   'partner' => 'jk',     
+                                   'partner' => 'jk',
                                    'name' => $item->name,
                                    'code' => $item->id,
                                    'active' => 1,
@@ -225,123 +225,259 @@ class HomeController extends Controller
         return view('modal', $data);
     }
 
-    public function add_my_order_product(Request $request){
+    // public function add_my_order_product(Request $request){
 
-        $this->validate($request, [
-            'name_order' => 'required',
-            'telephone_order' => 'required',
-            'address' => 'required'
-        ]);
+    //     $this->validate($request, [
+    //         'name_order' => 'required',
+    //         'telephone_order' => 'required',
+    //         'address' => 'required'
+    //     ]);
 
-        $pro = product::where('id', $request->proid)->first();
+    //     $pro = product::where('id', $request->proid)->first();
 
-        if($pro){
+    //     if($pro){
 
-            $total = (int) $pro->point;
-            $user_point = (int) Auth::user()->point;
+    //         $total = (int) $pro->point;
+    //         $user_point = (int) Auth::user()->point;
 
-            if($total > $user_point){
-                return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error','เพิ่ม เสร็จเรียบร้อยแล้ว');
-            }
+    //         if($total > $user_point){
+    //             return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error','เพิ่ม เสร็จเรียบร้อยแล้ว');
+    //         }
 
-            $api_date = date("YmdHi");
+    //         $api_date = date("YmdHi");
 
-            $randomSixDigitInt = $api_date.''.Auth::user()->id.''.$total.''.Auth::user()->id;
+    //         $randomSixDigitInt = $api_date.''.Auth::user()->id.''.$total.''.Auth::user()->id;
 
-            $order_check = order::where('order_no', $randomSixDigitInt)->count();
-            if($order_check == 0){
-
-
-                $package = new order();
-                $package->user_id = Auth::user()->id;
-                $package->name_order = $request['name_order'];
-                $package->order_no = $randomSixDigitInt;
-                $package->telephone_order = $request['telephone_order'];
-                $package->address = $request['address'];
-                $package->sum_point = $total;
-                $package->note = $request['note'];
-                $package->save();
-
-                $the_id = $package->id;
-
-                // $user = User::where('id', Auth::user()->id)->first();
-                $mypoint = ($user_point - $total);
-
-                DB::table('users')
-                    ->where('id', Auth::user()->id)
-                    ->update(['point' => $mypoint]);
-
-                    DB::table('orders')
-                    ->where('id', $the_id)
-                    ->update(['old_point' => Auth::user()->point]);
-
-                    $package1 = new point();
-                    $package1->user_key = Auth::user()->phone;
-                    $package1->date = date('Y-m-d');
-                    $package1->total_valid_bet_amount = 0;
-                    $package1->point = $request['total'];
-                    $package1->type = 1;
-                    $package1->last_point = $mypoint;
-                    $package1->detail = 'แลกของรางวัล ออเดอร์ '.$randomSixDigitInt;
-                    $package1->save();
-
-                    $obj = new order_detail();
-                    $obj->user_id = Auth::user()->id;
-                    $obj->order_no = $the_id;
-                    $obj->pro_id = $pro->id;
-                    $obj->amount = 1;
-                    $obj->pro_name = $pro->name;
-                    $obj->pro_point = $pro->point;
-                    $obj->pro_image = $pro->image;
-                    $obj->save();
-
-                    $total_pro = ($pro->stock - 1);
-
-                    DB::table('products')
-                    ->where('id', $pro->id)
-                    ->update(['stock' => $total_pro]);
+    //         $order_check = order::where('order_no', $randomSixDigitInt)->count();
+    //         if($order_check == 0){
 
 
-                    $message = "มีรายการแลกสินค้าจาก  ".$package->name_order.", ข้อมูลผู้ติดต่อ : ".$package->telephone_order." หมายเลขสั่งซื้อ : ".$randomSixDigitInt." จำนวนพอยท์ : ".$package->sum_point;
-                    $lineapi = env('line_token'); 
-                    
+    //             $package = new order();
+    //             $package->user_id = Auth::user()->id;
+    //             $package->name_order = $request['name_order'];
+    //             $package->order_no = $randomSixDigitInt;
+    //             $package->telephone_order = $request['telephone_order'];
+    //             $package->address = $request['address'];
+    //             $package->sum_point = $total;
+    //             $package->note = $request['note'];
+    //             $package->save();
 
-                    $mms =  trim($message);
-                    $chOne = curl_init();
-                    curl_setopt($chOne, CURLOPT_URL, "https://notify-api.line.me/api/notify");
-                    curl_setopt($chOne, CURLOPT_SSL_VERIFYHOST, 0);
-                    curl_setopt($chOne, CURLOPT_SSL_VERIFYPEER, 0);
-                    curl_setopt($chOne, CURLOPT_POST, 1);
-                    curl_setopt($chOne, CURLOPT_POSTFIELDS, "message=$mms");
-                    curl_setopt($chOne, CURLOPT_FOLLOWLOCATION, 1);
-                    $headers = array('Content-type: application/x-www-form-urlencoded', 'Authorization: Bearer '.$lineapi.'',);
-                    curl_setopt($chOne, CURLOPT_HTTPHEADER, $headers);
-                    curl_setopt($chOne, CURLOPT_RETURNTRANSFER, 1);
-                    $result = curl_exec($chOne);
-                    if(curl_error($chOne)){
-                    echo 'error:' . curl_error($chOne);
-                    }else{
-                    $result_ = json_decode($result, true);
-            
-                    }
-                    curl_close($chOne);
+    //             $the_id = $package->id;
 
-                    return redirect(url('payment_success/'.$randomSixDigitInt))->with('pay_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
+    //             // $user = User::where('id', Auth::user()->id)->first();
+    //             $mypoint = ($user_point - $total);
 
-            }else{
+    //             DB::table('users')
+    //                 ->where('id', Auth::user()->id)
+    //                 ->update(['point' => $mypoint]);
 
-                return redirect(url('payment_success/'.$randomSixDigitInt))->with('pay_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
-            }
+    //                 DB::table('orders')
+    //                 ->where('id', $the_id)
+    //                 ->update(['old_point' => Auth::user()->point]);
+
+    //                 $package1 = new point();
+    //                 $package1->user_key = Auth::user()->phone;
+    //                 $package1->date = date('Y-m-d');
+    //                 $package1->total_valid_bet_amount = 0;
+    //                 $package1->point = $request['total'];
+    //                 $package1->type = 1;
+    //                 $package1->last_point = $mypoint;
+    //                 $package1->detail = 'แลกของรางวัล ออเดอร์ '.$randomSixDigitInt;
+    //                 $package1->save();
+
+    //                 $obj = new order_detail();
+    //                 $obj->user_id = Auth::user()->id;
+    //                 $obj->order_no = $the_id;
+    //                 $obj->pro_id = $pro->id;
+    //                 $obj->amount = 1;
+    //                 $obj->pro_name = $pro->name;
+    //                 $obj->pro_point = $pro->point;
+    //                 $obj->pro_image = $pro->image;
+    //                 $obj->save();
+
+    //                 $total_pro = ($pro->stock - 1);
+
+    //                 DB::table('products')
+    //                 ->where('id', $pro->id)
+    //                 ->update(['stock' => $total_pro]);
+
+
+    //                 $message = "มีรายการแลกสินค้าจาก  ".$package->name_order.", ข้อมูลผู้ติดต่อ : ".$package->telephone_order." หมายเลขสั่งซื้อ : ".$randomSixDigitInt." จำนวนพอยท์ : ".$package->sum_point;
+    //                 $lineapi = env('line_token');
+
+
+    //                 $mms =  trim($message);
+    //                 $chOne = curl_init();
+    //                 curl_setopt($chOne, CURLOPT_URL, "https://notify-api.line.me/api/notify");
+    //                 curl_setopt($chOne, CURLOPT_SSL_VERIFYHOST, 0);
+    //                 curl_setopt($chOne, CURLOPT_SSL_VERIFYPEER, 0);
+    //                 curl_setopt($chOne, CURLOPT_POST, 1);
+    //                 curl_setopt($chOne, CURLOPT_POSTFIELDS, "message=$mms");
+    //                 curl_setopt($chOne, CURLOPT_FOLLOWLOCATION, 1);
+    //                 $headers = array('Content-type: application/x-www-form-urlencoded', 'Authorization: Bearer '.$lineapi.'',);
+    //                 curl_setopt($chOne, CURLOPT_HTTPHEADER, $headers);
+    //                 curl_setopt($chOne, CURLOPT_RETURNTRANSFER, 1);
+    //                 $result = curl_exec($chOne);
+    //                 if(curl_error($chOne)){
+    //                 echo 'error:' . curl_error($chOne);
+    //                 }else{
+    //                 $result_ = json_decode($result, true);
+
+    //                 }
+    //                 curl_close($chOne);
+
+    //                 return redirect(url('payment_success/'.$randomSixDigitInt))->with('pay_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
+
+    //         }else{
+
+    //             return redirect(url('payment_success/'.$randomSixDigitInt))->with('pay_success','เพิ่ม เสร็จเรียบร้อยแล้ว');
+    //         }
 
 
 
-        }else{
-            return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error','เพิ่ม เสร็จเรียบร้อยแล้ว');
+    //     }else{
+    //         return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error','เพิ่ม เสร็จเรียบร้อยแล้ว');
+    //     }
+
+
+
+    // }
+
+
+    public function add_my_order_product(Request $request)
+{
+    // Validate the request
+    $this->validate($request, [
+        'name_order' => 'required|string|max:255',
+        'telephone_order' => 'required|string|max:15',
+        'address' => 'required|string|max:500',
+        'note' => 'nullable|string|max:500',
+    ]);
+
+    // ดึงข้อมูลสินค้า
+    $product = product::find($request->proid);
+
+    if (!$product) {
+        return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error', 'ไม่พบสินค้า.');
+    }
+
+    // ตรวจสอบ point ของผู้ใช้งาน
+    $user = Auth::user();
+    $totalProductPoint = (int) $product->point;
+    $userPoint = (int) $user->point;
+
+    if ($totalProductPoint > $userPoint) {
+        return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error', 'พอยท์ของคุณไม่เพียงพอ.');
+    }
+
+
+    // ตรวจสอบคำสั่งซ้ำด้วย session หรือ database
+    $orderKey = 'order_' . $request->proid . '_' . $user->id;
+
+    if (session()->has($orderKey)) {
+        return redirect(url('payment_success'))->with('pay_error', 'คำสั่งนี้กำลังดำเนินการ.');
+    }
+
+    // เพิ่มคำสั่งลงใน session เพื่อป้องกันซ้ำ
+    session([$orderKey => true]);
+
+    DB::beginTransaction();
+    try {
+        // Generate order number
+        $apiDate = now()->format('YmdHi');
+        $orderNo = $apiDate . $user->id . $totalProductPoint . $user->id;
+
+        // ตรวจสอบว่าหมายเลขคำสั่งซ้ำหรือไม่
+        $existingOrder = Order::where('order_no', $orderNo)->exists();
+        if ($existingOrder) {
+            return redirect(url('payment_success/'.$orderNo))->with('pay_success', 'คำสั่งซ้ำ.');
         }
 
-        
+        // สร้างคำสั่งซื้อ
+        $order = new order();
+        $order->user_id = $user->id;
+        $order->name_order = $request->name_order;
+        $order->order_no = $orderNo;
+        $order->telephone_order = $request->telephone_order;
+        $order->address = $request->address;
+        $order->sum_point = $totalProductPoint;
+        $order->note = $request->note;
+        $order->old_point = $userPoint; // เก็บพอยท์เก่า
+        $order->save();
 
+        // อัปเดต point ของผู้ใช้
+        $remainingPoints = $userPoint - $totalProductPoint;
+        $user->update(['point' => $remainingPoints]);
+
+        // บันทึกการใช้ point
+        $pointTransaction = new point();
+        $pointTransaction->user_key = $user->phone;
+        $pointTransaction->date = now()->toDateString();
+        $pointTransaction->total_valid_bet_amount = 0;
+        $pointTransaction->point = -$totalProductPoint; // ใช้พอยท์
+        $pointTransaction->type = 1; // ประเภทการใช้
+        $pointTransaction->last_point = $remainingPoints;
+        $pointTransaction->detail = 'แลกของรางวัล ออเดอร์ ' . $orderNo;
+        $pointTransaction->save();
+
+        // เพิ่มรายละเอียดสินค้าในคำสั่งซื้อ
+        $orderDetail = new order_detail();
+        $orderDetail->user_id = $user->id;
+        $orderDetail->order_no = $order->id;
+        $orderDetail->pro_id = $product->id;
+        $orderDetail->amount = 1;
+        $orderDetail->pro_name = $product->name;
+        $orderDetail->pro_point = $product->point;
+        $orderDetail->pro_image = $product->image;
+        $orderDetail->save();
+
+        // อัปเดต stock ของสินค้า
+        $product->decrement('stock');
+
+        // ส่งข้อความแจ้งเตือนผ่าน Line Notify
+        $message = "มีรายการแลกสินค้าจาก {$order->name_order}, ข้อมูลผู้ติดต่อ: {$order->telephone_order}, หมายเลขสั่งซื้อ: {$orderNo}, จำนวนพอยท์: {$order->sum_point}";
+        $this->sendLineNotify($message);
+
+        DB::commit();
+
+        session()->forget($orderKey);
+
+
+        return redirect(url('payment_success/'.$orderNo))->with('pay_success', 'การแลกสินค้าสำเร็จ!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Error during reward exchange: ' . $e->getMessage());
+        return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error', 'เกิดข้อผิดพลาดระหว่างการแลกสินค้า.');
     }
+}
+
+
+
+    private function sendLineNotify($message)
+    {
+        $lineToken = env('LINE_TOKEN');
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://notify-api.line.me/api/notify");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "message=$message");
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-type: application/x-www-form-urlencoded',
+            'Authorization: Bearer ' . $lineToken,
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $result = curl_exec($ch);
+
+        if (curl_error($ch)) {
+            \Log::error('Line Notify Error: ' . curl_error($ch));
+        }
+
+        curl_close($ch);
+    }
+
 
     public function add_my_order(Request $request){
 
@@ -392,13 +528,13 @@ class HomeController extends Controller
           $last = 0;
 
           $point_last = DB::table('points')->where('user_key', Auth::user()->phone)->orderby('id', 'desc')->first();
-          
+
           if(isset($point_last)){
             $last = $point_last->last_point - $request['total'];
           }else{
             $last = Auth::user()->point;
           }
-          
+
 
           $package1 = new point();
           $package1->user_key = Auth::user()->phone;
@@ -413,9 +549,9 @@ class HomeController extends Controller
           //2
 
           $cart = Session::get('cart');
- 
+
           foreach ($cart as $product_item){
- 
+
             $obj = new order_detail();
             $obj->user_id = Auth::user()->id;
             $obj->order_no = $the_id;
@@ -442,8 +578,8 @@ class HomeController extends Controller
          session()->forget('cart');
 
          $message = "มีรายการแลกสินค้าจาก  ".$package->name_order.", ข้อมูลผู้ติดต่อ : ".$package->telephone_order." หมายเลขสั่งซื้อ : ".$randomSixDigitInt." จำนวนพอยท์ : ".$package->sum_point;
-        $lineapi = env('line_token'); 
-        
+        $lineapi = env('line_token');
+
 
         $mms =  trim($message);
         $chOne = curl_init();
@@ -461,7 +597,7 @@ class HomeController extends Controller
         echo 'error:' . curl_error($chOne);
         }else{
         $result_ = json_decode($result, true);
-   
+
         }
         curl_close($chOne);
 
@@ -474,7 +610,7 @@ class HomeController extends Controller
 
     }
 
-         
+
     }
 
 
@@ -536,13 +672,13 @@ class HomeController extends Controller
 //             $total += ($product_item['point']);
 //         }
 //     }
-    
+
 
 //     if($total > Auth::user()->point){
 //         return redirect(url('/'))->with('error_point','คุณทำการเพิ่มอสังหา สำเร็จ');
 //     }else{
 
-    
+
 
 //     $cart[$product[0]->id] = array(
 //         "id" => $product[0]->id,
@@ -573,13 +709,13 @@ class HomeController extends Controller
             $total += ($product_item['point']);
         }
     }
-    
+
 
     if($total > Auth::user()->point){
         return redirect(url('/'))->with('error_point','คุณทำการเพิ่มอสังหา สำเร็จ');
     }else{
 
-    
+
 
     $cart[$product[0]->id] = array(
         "id" => $product[0]->id,
@@ -632,7 +768,7 @@ class HomeController extends Controller
     {
         $objs = point::where('user_key', Auth::user()->phone)->orderby('id', 'desc')->paginate(15);
         $data['objs'] = $objs;
-   
+
         return view('account.my_point', $data);
     }
     public function history()
@@ -646,7 +782,7 @@ class HomeController extends Controller
         }
 
         $data['objs'] = $objs;
-   
+
         return view('account.history', $data);
     }
     public function invoice_detail($id)
@@ -678,9 +814,9 @@ class HomeController extends Controller
     {
         return view('how_to');
     }
-    
-    
-    
-    
-    
+
+
+
+
+
 }

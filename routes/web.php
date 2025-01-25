@@ -17,6 +17,17 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
+Route::get('/images/{file}', function ($file) {
+	$url = Storage::disk('do_spaces')->temporaryUrl(
+	  $file,
+	  date('Y-m-d H:i:s', strtotime("+5 min"))
+	);
+	if ($url) {
+	   return Redirect::to($url);
+	}
+	return abort(404);
+  })->where('file', '.+');
+
 
 Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 

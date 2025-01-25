@@ -7,6 +7,7 @@ use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Facades\DB;
 use App\Models\slide;
 use Auth;
+use Illuminate\Support\Facades\Storage;
 
 class SlideController extends Controller
 {
@@ -43,24 +44,76 @@ class SlideController extends Controller
     public function slide_status(Request $request){
 
         //  dd($request->all());
-    
+
           $user = slide::findOrFail($request->user_id);
-    
+
                   if($user->status == 1){
                       $user->status = 0;
                   } else {
                       $user->status = 1;
                   }
-    
+
           return response()->json([
           'data' => [
             'success' => $user->save(),
           ]
         ]);
-    
+
+    }
+
+
+    private function deleteOldFile($fileUrl, $path)
+{
+    if ($fileUrl) {
+        // Convert full URL to relative path
+        $relativePath = str_replace('https://kingbar.sgp1.cdn.digitaloceanspaces.com/', '', $fileUrl);
+
+        // Delete the file from DigitalOcean Spaces
+        Storage::disk('do_spaces')->delete($relativePath);
+    }
+}
+
+
+    private function uploadImage($image, $path)
+    {
+        if ($image) {
+            // ตรวจสอบชนิดไฟล์
+            $extension = $image->getClientOriginalExtension();
+
+            // Generate unique filename
+            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $image->getClientOriginalName());
+
+            if (strtolower($extension) === 'gif') {
+                // อัปโหลด GIF โดยไม่ปรับขนาด
+                Storage::disk('do_spaces')->putFileAs(
+                    $path,
+                    $image,
+                    $filename,
+                    'public'
+                );
+            } else {
+                // Resize and prepare the image for non-GIF files
+                $img = Image::make($image->getRealPath());
+                $img->resize(800, 800, function ($constraint) {
+                    $constraint->aspectRatio(); // Keep aspect ratio
+                });
+                $img->stream(); // Stream the resized image
+
+                Storage::disk('do_spaces')->put(
+                    "$path/$filename",
+                    $img->__toString(),
+                    'public'
+                );
+            }
+
+            // Return the file URL
+            return "https://kingbar.sgp1.cdn.digitaloceanspaces.com/$path/$filename";
         }
 
-    
+        return null;
+    }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -70,28 +123,28 @@ class SlideController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $image = $request->file('image');
-
+        // Validation
         $this->validate($request, [
-             'image' => 'required',
-             'title' => 'required',
-             'url_btn' => 'required'
-         ]);
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'title' => 'required|string|max:255',
+            'url_btn' => 'required',
+            'detail' => 'nullable|string',
+        ]);
 
-            $path = 'img/slide/';
-            $filename = time()."-".$image->getClientOriginalName();
-            $image->move($path, $filename);
+        // Upload image to DigitalOcean Spaces
+        $filename = $this->uploadImage($request->file('image'), 'cv168point/slide');
 
-      $package = new slide();
-      $package->title = $request['title'];
-      $package->detail = $request['detail'];
-      $package->url_btn = $request['url_btn'];
-      $package->image = $filename;
-      $package->save();
+        // Save slide data to the database
+        $slide = new Slide();
+        $slide->title = $request->input('title');
+        $slide->detail = $request->input('detail');
+        $slide->url_btn = $request->input('url_btn');
+        $slide->image = $filename; // Store the image URL
+        $slide->save();
 
-      return redirect(url('admin/slide_show/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+        return redirect(url('admin/slide_show/'))->with('add_success', 'เพิ่มข้อมูลสำเร็จ!');
     }
+
 
     /**
      * Display the specified resource.
@@ -130,45 +183,42 @@ class SlideController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-
-        $image = $request->file('image');
-
+        // Validation
         $this->validate($request, [
-            'title' => 'required',
-            'url_btn' => 'required'
-         ]);
+            'title' => 'required|string|max:255',
+            'url_btn' => 'required',
+            'detail' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
+        // ค้นหา slide
+        $slide = Slide::findOrFail($id);
 
-      $package = slide::find($id);
-      $package->title = $request['title'];
-      $package->detail = $request['detail'];
-      $package->url_btn = $request['url_btn'];
-      $package->save();
+        // อัปเดตข้อมูลพื้นฐาน
+        $slide->title = $request->input('title');
+        $slide->detail = $request->input('detail');
+        $slide->url_btn = $request->input('url_btn');
 
-      if($image != NULL){
+        // ตรวจสอบว่าอัปโหลดรูปภาพใหม่หรือไม่
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
 
-        $objs = DB::table('slides')
-               ->where('id', $id)
-               ->first();
+            // ลบรูปภาพเก่า (ถ้ามี)
+            if ($slide->image) {
+                $this->deleteOldFile($slide->image, 'cv168point/slide');
+            }
 
-               if(isset($objs->image)){
-                $file_path = 'img/slide/'.$objs->image;
-                 unlink($file_path);
-              }
+            // อัปโหลดรูปภาพใหม่
+            $filename = $this->uploadImage($image, 'cv168point/slide');
+            $slide->image = $filename; // เก็บ URL ของรูปภาพใหม่
+        }
 
-            $path = 'img/slide/';
-            $filename = time()."-".$image->getClientOriginalName();
-            $image->move($path, $filename);
+        // บันทึกข้อมูล
+        $slide->save();
 
-          $package = slide::find($id);
-          $package->image = $filename;
-          $package->save();
-
-      }
-      return redirect(url('admin/slide_show/'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
-
+        return redirect(url('admin/slide_show/'))->with('edit_success', 'แก้ไขข้อมูลสำเร็จ!');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -178,16 +228,22 @@ class SlideController extends Controller
      */
     public function del_slide($id)
     {
-        $objs = DB::table('slides')
-            ->where('id', $id)
-            ->first();
+        try {
+            // ค้นหา Slide ที่ต้องการลบ
+            $slide = Slide::findOrFail($id);
 
-            if(isset($objs->image)){
-              $file_path = 'img/slide/'.$objs->image;
-               unlink($file_path);
+            // ลบรูปภาพถ้ามี
+            if ($slide->image) {
+                $this->deleteOldFile($slide->image, 'cv168point/slide');
             }
-             DB::table('slides')->where('id', $id)->delete();
-             return redirect(url('admin/slide_show'))->with('del_success','คุณทำการเพิ่มอสังหา สำเร็จ');
-        //
+
+            // ลบ Slide ออกจากฐานข้อมูล
+            $slide->delete();
+
+            return redirect(url('admin/slide_show'))->with('del_success', 'ลบข้อมูลสำเร็จ!');
+        } catch (\Exception $e) {
+            // จัดการข้อผิดพลาดและส่งข้อความแจ้งกลับ
+            return redirect()->back()->withErrors('เกิดข้อผิดพลาด: ' . $e->getMessage());
+        }
     }
 }

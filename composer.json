@@ -7,10 +7,12 @@
     "require": {
         "php": "^8.0.2",
         "guzzlehttp/guzzle": "^7.2",
+        "intervention/image": "2.7",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
+        "league/flysystem-aws-s3-v3": "^3.15",
         "maatwebsite/excel": "^3.1",
         "psr/simple-cache": "1.0"
     },

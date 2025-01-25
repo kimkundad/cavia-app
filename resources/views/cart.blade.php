@@ -45,7 +45,7 @@
                             @if(Session::get('cart') != null)
 
                             <?php
-                                
+
                                 $cart = session()->get('cart');
                                 ?>
                                 @foreach ($cart as $product_item)
@@ -55,9 +55,9 @@
                                 <tr>
                                     <td>
                                         <div class="ps-product--cart">
-                                            <div class="ps-product__thumbnail"><a href="#"><img src="{{ url('assets/img/products/'.$product_item['image']) }}" alt=""></a></div>
+                                            <div class="ps-product__thumbnail"><a href="#"><img src="{{ $product_item['image'] }}" alt=""></a></div>
                                             <div class="ps-product__content"><a href="#">{{$product_item['name_product']}}</a>
-                                               
+
                                             </div>
                                         </div>
                                     </td>
@@ -77,21 +77,21 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                 </div>
                 <div class="ps-section__footer">
                     <div class="row">
                         <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 ">
-                            
+
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 ">
-                        
+
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 ">
                             <div class="ps-block--shopping-total">
-                               
+
                                 <div class="ps-block__content">
-                                    
+
                                     <h3>Total Point<span> {{ number_format((float)$total, 0, '.', '') }}</span></h3>
                                 </div>
                             </div><a class="ps-btn ps-btn--fullwidth" href="{{ url('checkout') }}">ดำเนินการถัดไป</a>

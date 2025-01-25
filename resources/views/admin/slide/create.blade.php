@@ -29,6 +29,18 @@ window.gaTitle = 'หน้าแรก';
         กรอกข้อมูลให้ครบ ในส่วนที่มีเครื่องหมาย <span class="text-danger">*</span>
       </p>
 
+
+ @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+
       <form class="forms-sample" method="POST" action="{{$url}}" enctype="multipart/form-data">
         {{ method_field($method) }}
         {{ csrf_field() }}
