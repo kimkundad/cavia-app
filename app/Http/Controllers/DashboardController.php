@@ -82,14 +82,16 @@ class DashboardController extends Controller
     public function cleanupOldPoints()
     {
         try {
-            // คำนวณวันที่ย้อนหลัง 6 เดือน
-            $threeMonthsAgo = Carbon::now()->subMonths(6);
+            // คำนวณวันที่ย้อนหลัง 3 เดือน
+            $threeMonthsAgo = Carbon::now()->subMonths(3);
 
-            // แปลงวันที่เป็นรูปแบบที่เหมาะสม (เช่น 'Y-m-d')
-            $formattedDate = $threeMonthsAgo->format('Y-m-d');
-
-            // ลบ points ที่มี date เก่ากว่า 3 เดือน
-            $deleted = point::where('date', '<', $formattedDate)->delete();
+            // แปลงวันที่ในฐานข้อมูล (พ.ศ.) เป็น ค.ศ.
+            $deleted = Point::whereRaw("STR_TO_DATE(date, '%Y-%m-%d') < ?", [
+                $threeMonthsAgo->format('Y-m-d')
+            ])->whereRaw("YEAR(date) > 2500") // ตรวจสอบว่าเป็น พ.ศ.
+              ->update([
+                'date' => "DATE_SUB(date, INTERVAL 543 YEAR)"
+            ]);
 
             return response()->json([
                 'success' => true,
