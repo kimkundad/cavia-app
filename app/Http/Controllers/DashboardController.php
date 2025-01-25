@@ -85,13 +85,10 @@ class DashboardController extends Controller
             // คำนวณวันที่ย้อนหลัง 3 เดือน
             $threeMonthsAgo = Carbon::now()->subMonths(3);
 
-            // แปลงวันที่ในฐานข้อมูล (พ.ศ.) เป็น ค.ศ.
-            $deleted = Point::whereRaw("STR_TO_DATE(date, '%Y-%m-%d') < ?", [
+            // ลบ records ที่มี date ย้อนหลังเกิน 3 เดือน (และเป็น พ.ศ.)
+            $deleted = Point::whereRaw("STR_TO_DATE(CONCAT(YEAR(date) - 543, '-', MONTH(date), '-', DAY(date)), '%Y-%m-%d') < ?", [
                 $threeMonthsAgo->format('Y-m-d')
-            ])->whereRaw("YEAR(date) > 2500") // ตรวจสอบว่าเป็น พ.ศ.
-              ->update([
-                'date' => "DATE_SUB(date, INTERVAL 543 YEAR)"
-            ]);
+            ])->delete();
 
             return response()->json([
                 'success' => true,
