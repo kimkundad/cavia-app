@@ -18,6 +18,7 @@ use App\Exports\PointsExport;
 use App\Exports\OrderExport;
 use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -78,12 +79,37 @@ class DashboardController extends Controller
     }
 
 
-    public function points_export() 
+    public function cleanupOldPoints()
+    {
+        try {
+            // คำนวณวันที่ย้อนหลัง 6 เดือน
+            $threeMonthsAgo = Carbon::now()->subMonths(6);
+
+            // แปลงวันที่เป็นรูปแบบที่เหมาะสม (เช่น 'Y-m-d')
+            $formattedDate = $threeMonthsAgo->format('Y-m-d');
+
+            // ลบ points ที่มี date เก่ากว่า 3 เดือน
+            $deleted = point::where('date', '<', $formattedDate)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "ลบข้อมูลสำเร็จ: $deleted records deleted."
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'เกิดข้อผิดพลาด: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function points_export()
     {
         return Excel::download(new PointsExport, 'point.xlsx');
     }
 
-    public function orders_export() 
+    public function orders_export()
     {
         return Excel::download(new OrderExport, 'orders.xlsx');
     }
@@ -176,7 +202,7 @@ class DashboardController extends Controller
 
         $objs = \DB::table('wheelsetting')->where('id', $id)->first();
         $data['objs'] = $objs;
-        
+
 
         $data['id'] = $id;
         return view('admin.wheel.edit', $data);
@@ -207,203 +233,275 @@ class DashboardController extends Controller
     }
 
 
+    private function processUserPoints(array $data)
+{
+    // แปลง total_valid_bet_amount เป็น float
+    $totalValidBetAmount = floatval($data['total_valid_bet_amount'] ?? 0);
 
-    public function import(Request $request){
+    // ตรวจสอบ user_key ว่ามีอยู่หรือไม่
+    $lastPoint = DB::table('points')
+        ->where('user_key', $data['user_key'])
+        ->orderBy('id', 'desc')
+        ->first();
 
-        $this->validate($request, [
-            'file' => 'required'
+    $userExists = User::where('phone', $data['user_key'])->exists();
+
+    // คำนวณ point
+    $getPoint = ($totalValidBetAmount * 2) / 100;
+
+    if ($userExists) {
+        User::where('phone', $data['user_key'])->increment('point', $getPoint);
+    } else {
+        $this->createNewUser($data, $getPoint);
+    }
+
+    // เพิ่มข้อมูล point ใหม่หากจำเป็น
+    if (!$lastPoint || $lastPoint->date !== $data['date']) {
+        $lastPointValue = $lastPoint ? $lastPoint->last_point : 0;
+        $newPointValue = $lastPointValue + $getPoint;
+
+        Point::create([
+            'user_key' => $data['user_key'],
+            'date' => $data['date'],
+            'total_valid_bet_amount' => $totalValidBetAmount,
+            'point' => $getPoint,
+            'last_point' => $newPointValue,
         ]);
-
-        $upload = $request->file('file');
-        
-        $filePath = $upload->getRealPath();
-
-        //Read the file
-        $file=fopen($filePath, 'r');
-
-        $header = fgetcsv($file);
-
-        //Loop through the columns
-        while ($columns = fgetcsv($file)){
-
-            //$data['total_valid_bet_amount']
-
-            $data = array_combine($header, $columns);
-
-            $point_last = DB::table('points')->where('user_key', $data['user_key'])->orderby('id', 'desc')->first();
-            $point = 0;
-            $get_point = 0;
-            $get_user = User::where('phone', $data['user_key'])->count();
-
-            if(isset($point_last)){
-                if($point_last->date == $data['date']){
-                        
-                }else{
-
-                    $get_point = 0;
-
-            if($get_user > 0){
-
-                $get_point = ($data['total_valid_bet_amount']*(2))/100;
-
-                \DB::table('users')->where('phone', $data['user_key'])->increment('point', $get_point);
-                
-            }else{
-
-                if($get_user == 0){
-
-                $get_point = ($data['total_valid_bet_amount']*(2))/100;
-                $pass = (\random_int(1000, 9999)).''.(\random_int(1000, 9999)).''.(\random_int(10, 99));
-                $ran = array("1483537975.png","1483556517.png","1483556686.png");
-
-                $user = User::create([
-                    'name' => $data['user_key'],
-                    'email' => (\random_int(1000000, 9999999)).'@gmail.com',
-                    'password' => Hash::make($pass),
-                    'is_admin' => false,
-                    'provider' => 'email',
-                    'avatar' => $ran[array_rand($ran, 1)],
-                    'code_user' => $pass,
-                    'phone' => $data['user_key'],
-                    'point' => $get_point,
-                  ]);
-
-                $user
-                ->roles()
-                ->attach(Role::where('name', 'user')->first());
-
-                }
-
-            }
-
-                    
-                }
-            }else{
-
-                $get_point = 0;
-            
-                if($get_user > 0){
-    
-                    $get_point = ($data['total_valid_bet_amount']*(2))/100;
-    
-                    \DB::table('users')->where('phone', $data['user_key'])->increment('point', $get_point);
-                }else{
-    
-                    if($get_user == 0){
-    
-                    $get_point = ($data['total_valid_bet_amount']*(2))/100;
-                    $pass = (\random_int(1000, 9999)).''.(\random_int(1000, 9999)).''.(\random_int(10, 99));
-                    $ran = array("1483537975.png","1483556517.png","1483556686.png");
-    
-                    $user = User::create([
-                        'name' => $data['user_key'],
-                        'email' => (\random_int(1000000, 9999999)).'@gmail.com',
-                        'password' => Hash::make($pass),
-                        'is_admin' => false,
-                        'provider' => 'email',
-                        'avatar' => $ran[array_rand($ran, 1)],
-                        'code_user' => $pass,
-                        'phone' => $data['user_key'],
-                        'point' => $get_point,
-                      ]);
-    
-                    $user
-                    ->roles()
-                    ->attach(Role::where('name', 'user')->first());
-    
-                    }
-    
-                }
-            }
+    }
+}
 
 
-            if(isset($point_last)){
+/**
+ * Create a new user with random values and points
+ */
+private function createNewUser(array $data, float $getPoint)
+{
+    $password = rand(10000000, 99999999);
+    $avatars = ["1483537975.png", "1483556517.png", "1483556686.png"];
 
-                $point = 0;
-            $get_point = 0;
+    $user = User::create([
+        'name' => $data['user_key'],
+        'email' => rand(1000000, 9999999) . '@gmail.com',
+        'password' => Hash::make($password),
+        'is_admin' => false,
+        'provider' => 'email',
+        'avatar' => $avatars[array_rand($avatars)],
+        'code_user' => $password,
+        'phone' => $data['user_key'],
+        'point' => $getPoint,
+    ]);
 
-            $point = $point_last->last_point;
-            //20
-            $get_point = ($data['total_valid_bet_amount']*(2))/100;
-            $point = $point + $get_point;
-
-            if($point_last->date == $data['date']){
-                
-            }else{
-
-                point::create([
-                    'user_key'  => $data['user_key'],
-                    'date'  =>  $data['date'],
-                    'total_valid_bet_amount'  =>  $data['total_valid_bet_amount'],
-                    'point'  => $get_point,
-                    'last_point'  => $point,
-                  ]);
-
-            }
-
-            
-            }else{
-
-                $point = 0;
-            $get_point = 0;
-
-            $get_point = ($data['total_valid_bet_amount']*(2))/100;
-            $point = $get_point;
-
-            point::create([
-                'user_key'  => $data['user_key'],
-                'date'  =>  $data['date'],
-                'total_valid_bet_amount'  =>  $data['total_valid_bet_amount'],
-                'point'  => $get_point,
-                'last_point'  => $point,
-              ]);
+    // Assign 'user' role
+    $user->roles()->attach(Role::where('name', 'user')->first());
+}
 
 
-            }
 
-        }
+    // public function import(Request $request){
 
-      //  dd(request()->file('file'));
+    //     $this->validate($request, [
+    //         'file' => 'required'
+    //     ]);
 
-    //  $data_csv = Excel::import(new UsersImport, request()->file('file'));
-     
-    //  $user = User::get();
+    //     $upload = $request->file('file');
 
-    //   if(isset($user)){
-    //     foreach($user as $j){
+    //     $filePath = $upload->getRealPath();
 
-    //         // $details['phone'] = $j->phone;
-    //         // $details['type'] = $j->type;
-    //         // $details['point'] = $j->point;
-    //         // $details['id'] = $j->id;
+    //     //Read the file
+    //     $file=fopen($filePath, 'r');
 
-    //         // UserUpPoint::dispatch($details);
+    //     $header = fgetcsv($file);
 
-    //       /*  $total_point = 0;
-    //         $objs = point::where('user_key', $j->phone)->get();
+    //     //Loop through the columns
+    //     while ($columns = fgetcsv($file)){
 
-    //         foreach($objs as $u){
-    //             if($u->type == 0){
-    //                 $total_point += $u->point;
-    //             }elseif($u->type == 2){
-    //             $total_point += $u->point;
+    //         //$data['total_valid_bet_amount']
+
+    //         $data = array_combine($header, $columns);
+
+    //         $point_last = DB::table('points')->where('user_key', $data['user_key'])->orderby('id', 'desc')->first();
+    //         $point = 0;
+    //         $get_point = 0;
+    //         $get_user = User::where('phone', $data['user_key'])->count();
+
+    //         if(isset($point_last)){
+    //             if($point_last->date == $data['date']){
+
     //             }else{
-    //                 $total_point -= $u->point;
+
+    //                 $get_point = 0;
+
+    //         if($get_user > 0){
+
+    //             $get_point = ($data['total_valid_bet_amount']*(2))/100;
+
+    //             \DB::table('users')->where('phone', $data['user_key'])->increment('point', $get_point);
+
+    //         }else{
+
+    //             if($get_user == 0){
+
+    //             $get_point = ($data['total_valid_bet_amount']*(2))/100;
+    //             $pass = (\random_int(1000, 9999)).''.(\random_int(1000, 9999)).''.(\random_int(10, 99));
+    //             $ran = array("1483537975.png","1483556517.png","1483556686.png");
+
+    //             $user = User::create([
+    //                 'name' => $data['user_key'],
+    //                 'email' => (\random_int(1000000, 9999999)).'@gmail.com',
+    //                 'password' => Hash::make($pass),
+    //                 'is_admin' => false,
+    //                 'provider' => 'email',
+    //                 'avatar' => $ran[array_rand($ran, 1)],
+    //                 'code_user' => $pass,
+    //                 'phone' => $data['user_key'],
+    //                 'point' => $get_point,
+    //               ]);
+
+    //             $user
+    //             ->roles()
+    //             ->attach(Role::where('name', 'user')->first());
+
+    //             }
+
+    //         }
+
+
+    //             }
+    //         }else{
+
+    //             $get_point = 0;
+
+    //             if($get_user > 0){
+
+    //                 $get_point = ($data['total_valid_bet_amount']*(2))/100;
+
+    //                 \DB::table('users')->where('phone', $data['user_key'])->increment('point', $get_point);
+    //             }else{
+
+    //                 if($get_user == 0){
+
+    //                 $get_point = ($data['total_valid_bet_amount']*(2))/100;
+    //                 $pass = (\random_int(1000, 9999)).''.(\random_int(1000, 9999)).''.(\random_int(10, 99));
+    //                 $ran = array("1483537975.png","1483556517.png","1483556686.png");
+
+    //                 $user = User::create([
+    //                     'name' => $data['user_key'],
+    //                     'email' => (\random_int(1000000, 9999999)).'@gmail.com',
+    //                     'password' => Hash::make($pass),
+    //                     'is_admin' => false,
+    //                     'provider' => 'email',
+    //                     'avatar' => $ran[array_rand($ran, 1)],
+    //                     'code_user' => $pass,
+    //                     'phone' => $data['user_key'],
+    //                     'point' => $get_point,
+    //                   ]);
+
+    //                 $user
+    //                 ->roles()
+    //                 ->attach(Role::where('name', 'user')->first());
+
+    //                 }
+
     //             }
     //         }
 
-    //         $package = User::find($j->id);
-    //         $package->point = $total_point;
-    //         $package->save(); */
+
+    //         if(isset($point_last)){
+
+    //             $point = 0;
+    //         $get_point = 0;
+
+    //         $point = $point_last->last_point;
+    //         //20
+    //         $get_point = ($data['total_valid_bet_amount']*(2))/100;
+    //         $point = $point + $get_point;
+
+    //         if($point_last->date == $data['date']){
+
+    //         }else{
+
+    //             point::create([
+    //                 'user_key'  => $data['user_key'],
+    //                 'date'  =>  $data['date'],
+    //                 'total_valid_bet_amount'  =>  $data['total_valid_bet_amount'],
+    //                 'point'  => $get_point,
+    //                 'last_point'  => $point,
+    //               ]);
+
+    //         }
+
+
+    //         }else{
+
+    //             $point = 0;
+    //         $get_point = 0;
+
+    //         $get_point = ($data['total_valid_bet_amount']*(2))/100;
+    //         $point = $get_point;
+
+    //         point::create([
+    //             'user_key'  => $data['user_key'],
+    //             'date'  =>  $data['date'],
+    //             'total_valid_bet_amount'  =>  $data['total_valid_bet_amount'],
+    //             'point'  => $get_point,
+    //             'last_point'  => $point,
+    //           ]);
+
+
+    //         }
 
     //     }
+
+
+
+    //     return redirect(url('admin/get_point/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     // }
-        
 
-     // dd($data_csv);
 
-        return redirect(url('admin/get_point/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+
+    public function import(Request $request)
+{
+    $this->validate($request, [
+        'file' => 'required|file',
+    ]);
+
+    $file = $request->file('file');
+    $filePath = $file->getRealPath();
+
+    // Read the CSV file
+    $handle = fopen($filePath, 'r');
+    $header = fgetcsv($handle);
+
+    DB::beginTransaction();
+
+    try {
+        while ($row = fgetcsv($handle)) {
+            $data = array_combine($header, $row);
+
+            // ข้ามแถวที่ `user_key` ว่าง
+            if (empty($data['user_key']) || trim($data['user_key']) === '') {
+                continue;
+            }
+
+            // Process the row
+            $this->processUserPoints($data);
+        }
+
+        DB::commit();
+        fclose($handle);
+
+        return redirect(url('admin/get_point/'))->with('add_success', 'การเพิ่มข้อมูลสำเร็จ!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        fclose($handle);
+
+        // Log the error for debugging
+        \Log::error('Error during import: ' . $e->getMessage());
+
+        return redirect()->back()->withErrors('เกิดข้อผิดพลาดระหว่างการนำเข้าข้อมูล: ' . $e->getMessage());
     }
+}
+
 
 
 
@@ -430,7 +528,7 @@ class DashboardController extends Controller
             ->leftjoin('users', 'users.phone', 'points.user_key')
             ->orderby('points.id', 'desc')
             ->paginate(20)->onEachSide(2);
-            
+
 
         $data['point_count'] = $point_count;
         $data['point'] = $point;

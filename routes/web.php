@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
     Route::get('api/addPointCheckin', [App\Http\Controllers\ServiceController::class, 'addPointCheckin'])->name('addPointCheckin');
 
     Route::get('/spin_wheel', [App\Http\Controllers\HomeController::class, 'spin_wheel'])->name('spin_wheel');
-    
+
 
     Route::get('/add_to_checkout/{id}', [App\Http\Controllers\HomeController::class, 'add_to_checkout'])->name('add_to_checkout');
 
@@ -60,14 +60,14 @@ Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
 
     Route::post('/add_my_order', [App\Http\Controllers\HomeController::class, 'add_my_order'])->name('add_my_order');
     Route::post('/add_my_order_product', [App\Http\Controllers\HomeController::class, 'add_my_order_product'])->name('add_my_order_product');
-    
+
 
     Route::post('/update_user', [App\Http\Controllers\HomeController::class, 'update_user'])->name('update_user');
 
     Route::get('/promotion', [App\Http\Controllers\HomeController::class, 'promotion'])->name('promotion');
 
     Route::get('/my_point', [App\Http\Controllers\HomeController::class, 'my_point'])->name('my_point');
-  
+
     Route::get('/contact', [App\Http\Controllers\HomeController::class, 'contact'])->name('contact');
 
     Route::get('/term', [App\Http\Controllers\HomeController::class, 'term'])->name('term');
@@ -97,7 +97,7 @@ Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
     Route::post('/api/product_status', [App\Http\Controllers\ProductController::class, 'product_status'])->name('product_status');
     Route::get('api/del_product/{id}', [App\Http\Controllers\ProductController::class, 'del_product'])->name('del_product');
     Route::get('api/del_point_user_2/{id}', [App\Http\Controllers\UserController::class, 'del_point_user_2'])->name('del_point_user_2');
-    
+
     Route::resource('/admin/users', App\Http\Controllers\UserController::class);
     Route::get('api/del_users/{id}', [App\Http\Controllers\UserController::class, 'del_user'])->name('del_user');
     Route::post('admin/add_point_user/{id}', [App\Http\Controllers\UserController::class, 'add_point_user'])->name('add_point_user');
@@ -121,7 +121,7 @@ Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
     Route::get('admin/get_point/create', [App\Http\Controllers\DashboardController::class, 'get_point_create'])->name('get_point_create');
     Route::get('admin/edit_point/{id}', [App\Http\Controllers\DashboardController::class, 'edit_point'])->name('edit_point');
     Route::post('api/post_wheel/{id}', [App\Http\Controllers\DashboardController::class, 'post_wheel'])->name('post_wheel');
- 
+
     Route::get('admin/wheel', [App\Http\Controllers\DashboardController::class, 'wheel'])->name('wheel');
     Route::get('admin/point_checkin', [App\Http\Controllers\DashboardController::class, 'point_checkin'])->name('point_checkin');
     Route::get('admin/edit_point_checkin/{id}', [App\Http\Controllers\DashboardController::class, 'edit_point_checkin'])->name('edit_point_checkin');
