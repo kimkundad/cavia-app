@@ -8,14 +8,14 @@
 
 <style>
     .ps-block__header p {
-       color:#000 
+       color:#000
     }
     .img-fluid{
         width:100%;
         border-radius:10px;
     }
     .ps-block__content p {
-        color:#000 
+        color:#000
     }
 </style>
 
@@ -26,7 +26,7 @@
     <main class="ps-page--my-account">
         <div class="ps-breadcrumb">
             <div class="container">
-                
+
                 <ul class="breadcrumb">
                     <li><a href="{{ url('/') }}">หน้าหลัก</a></li>
                     <li><a href="{{ url('/account') }}">Account</a></li>
@@ -60,7 +60,7 @@
                         </div>
                     </div>
                     <div class="col-lg-9">
-                        
+
                     <div class="ps-section__right">
                             <div class="ps-section--account-setting">
                                 <div class="ps-section__header">
@@ -136,9 +136,9 @@
                                                 <tr>
                                                     <td>
                                                         <div class="ps-product--cart">
-                                                            <div class="ps-product__thumbnail"><a href="#"><img src="{{ url('assets/img/products/'.$u->pro_image) }}" alt=""></a></div>
+                                                            <div class="ps-product__thumbnail"><a href="#"><img src="{{ $u->pro_image }}" alt=""></a></div>
                                                             <div class="ps-product__content"><a href="#">{{ $u->pro_name }}</a>
-                                                              
+
                                                             </div>
                                                         </div>
                                                     </td>
@@ -148,21 +148,21 @@
                                                 </tr>
                                                 @endforeach
                                                 @endif
-                                              
+
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                               
+
                             </div>
                         </div>
-                    
+
                     </div>
                 </div>
             </div>
         </section>
 
-        
+
 
     </main>
 

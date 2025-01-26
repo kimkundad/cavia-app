@@ -388,7 +388,7 @@ class HomeController extends Controller
         $orderNo = $apiDate . $user->id . $totalProductPoint . $user->id;
 
         // ตรวจสอบว่าหมายเลขคำสั่งซ้ำหรือไม่
-        $existingOrder = Order::where('order_no', $orderNo)->exists();
+        $existingOrder = order::where('order_no', $orderNo)->exists();
         if ($existingOrder) {
             return redirect(url('payment_success/'.$orderNo))->with('pay_success', 'คำสั่งซ้ำ.');
         }

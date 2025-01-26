@@ -125,7 +125,7 @@ class SlideController extends Controller
     {
         // Validation
         $this->validate($request, [
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             'title' => 'required|string|max:255',
             'url_btn' => 'required',
             'detail' => 'nullable|string',
@@ -188,7 +188,7 @@ class SlideController extends Controller
             'title' => 'required|string|max:255',
             'url_btn' => 'required',
             'detail' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
 
         // ค้นหา slide

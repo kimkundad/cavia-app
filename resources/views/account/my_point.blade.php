@@ -8,7 +8,7 @@
 
 <style>
     .ps-block__header p {
-       color:#000 
+       color:#000
     }
     .img-fluid{
         width:100%;
@@ -23,7 +23,7 @@
     <main class="ps-page--my-account">
         <div class="ps-breadcrumb">
             <div class="container">
-                
+
                 <ul class="breadcrumb">
                     <li><a href="{{ url('/') }}">หน้าหลัก</a></li>
                     <li><a href="{{ url('/account') }}">Account</a></li>
@@ -78,7 +78,7 @@
                                             @if(isset($objs))
                                             @foreach($objs as $u)
                                                 <tr>
-                                                    
+
                                                     <td>{{ ($u->date) }}</td>
 
                                                     <td>
@@ -96,24 +96,24 @@
 
 
                                                         @endif
-                                                        
+
                                                     </td>
 
                                                     <td>
                                                         @if($u->type == 1)
-                                                       <span class="text-danger"> - {{ number_format((float)$u->point, 0, '.', '') }} </span>
+                                                       <span class="text-danger"> {{ number_format((float)$u->point, 0, '.', '') }} </span>
                                                         @else
-                                                        <span class="text-success">+ {{ number_format((float)$u->point, 0, '.', '') }} </span>
+                                                        <span class="text-success"> {{ number_format((float)$u->point, 0, '.', '') }} </span>
                                                         @endif
-                                                        
+
                                                     </td>
                                                     <td>{{ number_format((float)$u->last_point, 0, '.', '') }}</td>
-                                                    
+
                                                 </tr>
                                                 @endforeach
                                             @endif
-                                                
-                                                
+
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -121,7 +121,7 @@
                                     @if(count($objs) > 15)
                                     @include('pagination.default', ['paginator' => $objs])
                                     @endif
-                                    
+
                                 </div>
                             </div>
                             <br>
@@ -132,7 +132,7 @@
             </div>
         </section>
 
-        
+
 
     </main>
 
