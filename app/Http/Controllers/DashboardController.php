@@ -234,31 +234,34 @@ class DashboardController extends Controller
 
     private function processUserPoints(array $data)
 {
-    // แปลง total_valid_bet_amount เป็น float
-    $totalValidBetAmount = floatval($data['total_valid_bet_amount'] ?? 0);
+    DB::transaction(function () use ($data) {
+        // แปลง total_valid_bet_amount เป็น float
+        $totalValidBetAmount = floatval($data['total_valid_bet_amount'] ?? 0);
 
-    // ตรวจสอบ user_key ว่ามีอยู่หรือไม่
-    $lastPoint = DB::table('points')
-        ->where('user_key', $data['user_key'])
-        ->orderBy('id', 'desc')
-        ->first();
+        // ตรวจสอบ user_key ว่ามีอยู่หรือไม่
+        $lastPoint = DB::table('points')
+            ->where('user_key', $data['user_key'])
+            ->orderBy('id', 'desc')
+            ->first();
 
-    $userExists = User::where('phone', $data['user_key'])->exists();
+        $user = User::where('phone', $data['user_key'])->first();
 
-    // คำนวณ point
-    $getPoint = ($totalValidBetAmount * 2) / 100;
+        // คำนวณ point
+        $getPoint = ($totalValidBetAmount * 2) / 100;
 
-    if ($userExists) {
-        User::where('phone', $data['user_key'])->increment('point', $getPoint);
-    } else {
-        $this->createNewUser($data, $getPoint);
-    }
+        if ($user) {
+            // เพิ่ม point ให้ user ที่มีอยู่แล้ว
+            $user->increment('point', $getPoint);
+        } else {
+            // ถ้า user ไม่มี ให้สร้างใหม่
+            $user = $this->createNewUser($data, $getPoint);
+        }
 
-    // เพิ่มข้อมูล point ใหม่หากจำเป็น
-    if (!$lastPoint || $lastPoint->date !== $data['date']) {
+        // คำนวณค่าของ last_point
         $lastPointValue = $lastPoint ? $lastPoint->last_point : 0;
         $newPointValue = $lastPointValue + $getPoint;
 
+        // **บันทึกข้อมูลลงใน points ทุกครั้งที่มีข้อมูลเข้ามา**
         Point::create([
             'user_key' => $data['user_key'],
             'date' => $data['date'],
@@ -266,7 +269,7 @@ class DashboardController extends Controller
             'point' => $getPoint,
             'last_point' => $newPointValue,
         ]);
-    }
+    });
 }
 
 

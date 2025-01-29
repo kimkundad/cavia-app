@@ -34,7 +34,7 @@ window.gaTitle = 'หน้าแรก';
                   <br /><br />
                 </div>
 
-                
+
                 <div class="col-md-12 grid-margin stretch-card">
                   <div class="card">
                     <div class="card-body">
@@ -55,7 +55,7 @@ window.gaTitle = 'หน้าแรก';
                           </tr>
                         </thead>
                         <tbody>
-                      
+
 						@if(isset($objs))
                       @foreach($objs as $u)
                           <tr access_id="{{$u->id}}">
@@ -82,8 +82,8 @@ window.gaTitle = 'หน้าแรก';
                         </tbody>
                       </table>
                       </div>
-			
-            @include('admin.pagination.default', ['paginator' => $objs])
+
+            {{ $objs->links('admin.pagination.custom') }}
                     </div>
                   </div>
                 </div>
