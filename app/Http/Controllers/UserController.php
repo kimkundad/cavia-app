@@ -42,11 +42,11 @@ class UserController extends Controller
           'search' => 'required'
         ]);
         $search = $request->get('search');
-  
+
               $cat = DB::table('users')
                     ->where('name', 'like', "%$search%")
                     ->paginate(15);
-  
+
               $data['objs'] = $cat;
               $data['search'] = $search;
 
@@ -83,7 +83,7 @@ class UserController extends Controller
         $package
        ->roles()
        ->attach(Role::where('name', 'user')->first());
-           
+
        }else{
 
         $package
@@ -91,7 +91,7 @@ class UserController extends Controller
        ->attach(Role::where('name', 'admin')->first());
 
        }
-       
+
 
        return redirect(url('admin/users/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
@@ -166,26 +166,26 @@ class UserController extends Controller
         $point = point::where('id', $id)->first();
         DB::table('points')->where('id', $id)->delete();
 
-        $user = User::where('phone', $point->user_key)->first();
-        $total_point = 0;
-        $objs = point::where('user_key', $point->user_key)->get();
+    //     $user = User::where('phone', $point->user_key)->first();
+    //     $total_point = 0;
+    //     $objs = point::where('user_key', $point->user_key)->get();
 
-        foreach($objs as $u){
-            if($u->type == 0){
-                $total_point += $u->point;
-            }else{
-                $total_point -= $u->point;
-            }
-       }
+    //     foreach($objs as $u){
+    //         if($u->type == 0){
+    //             $total_point += $u->point;
+    //         }else{
+    //             $total_point -= $u->point;
+    //         }
+    //    }
 
-       if(isset($user)){
+    //    if(isset($user)){
 
-        $package = User::find($user->id);
-        $package->point = $total_point;
-        $package->save();
+    //     $package = User::find($user->id);
+    //     $package->point = $total_point;
+    //     $package->save();
 
-       }
-       
+    //    }
+
 
        return redirect(url('admin/get_point'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
 
@@ -196,23 +196,23 @@ class UserController extends Controller
         $point = point::where('id', $id)->first();
         DB::table('points')->where('id', $id)->delete();
 
-        $user = User::where('phone', $point->user_key)->first();
-        $total_point = 0;
-        $objs = point::where('user_key', $point->user_key)->get();
+    //    $user = User::where('phone', $point->user_key)->first();
+    //    $total_point = 0;
+    //    $objs = point::where('user_key', $point->user_key)->get();
 
-        foreach($objs as $u){
-            if($u->type == 0){
-                $total_point += $u->point;
-            }elseif($u->type == 2){
-                $total_point += $u->point;
-            }else{
-                $total_point -= $u->point;
-            }
-       }
+    //     foreach($objs as $u){
+    //         if($u->type == 0){
+    //             $total_point += $u->point;
+    //         }elseif($u->type == 2){
+    //             $total_point += $u->point;
+    //         }else{
+    //             $total_point -= $u->point;
+    //         }
+    //    }
 
-       $package = User::find($user->id);
-       $package->point = $total_point;
-       $package->save();
+    //    $package = User::find($user->id);
+    //    $package->point = $total_point;
+    //    $package->save();
 
        return redirect(url('admin/users/'.$user->id.'/edit'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
 
@@ -230,7 +230,7 @@ class UserController extends Controller
 
      //   dd($get_point);
 
-     
+
         $package = new point();
        $package->user_key = $request['phone'];
        $package->date = $request['date'];
@@ -248,7 +248,7 @@ class UserController extends Controller
        $total_point = 0;
 
        $objs = point::where('user_key', $user_key)->get();
-        
+
        foreach($objs as $u){
             if($u->type == 0){
                 $total_point += $u->point;
@@ -292,8 +292,6 @@ class UserController extends Controller
             // - point
             $new_point = $obj->point - $request['point'];
 
-           
-
             $package1 = new point();
             $package1->user_key = $obj->phone;
             $package1->date = date('Y-m-d');
@@ -321,7 +319,7 @@ class UserController extends Controller
             $package1->detail = 'admin : '.Auth::user()->name.' ( '.Auth::user()->id.' ) ทำการเพิ่ม point '.$new_point.' user : '.$obj->name;
             $package1->save();
 
-            
+
         }
 
 
@@ -331,10 +329,10 @@ class UserController extends Controller
             $package->password = Hash::make($request['password']);
             $package->code_user = $request['password'];
             $package->point = $request['point'];
-            $package->save(); 
-        
+            $package->save();
+
        // dd($new_point);
-       
+
 
        $status_2 = $request['status_2'];
 
@@ -361,15 +359,15 @@ class UserController extends Controller
         //
 
         if($id == 1 || $id == 2){
-         
+
         }else{
-            
+
             $obj = DB::table('users')
             ->where('id', $id)
             ->delete();
 
         }
-        
+
         return redirect(url('admin/users/'))->with('delete','ลบข้อมูล สำเร็จ');
     }
 

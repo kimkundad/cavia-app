@@ -58,12 +58,12 @@ window.gaTitle = 'หน้าแรก';
             </select>
         </div>
 
-        
+
 
 
         <div style="text-align: right;">
         <br /><br /><br />
-        <a class="btn btn-light" href="{{ url('api/update_point/'.$objs->id) }}">Reset Point</a>
+        {{-- <a class="btn btn-light" href="{{ url('api/update_point/'.$objs->id) }}">Reset Point</a> --}}
         <button type="submit" class="btn btn-primary mr-2">บันทึก</button>
         </div>
 
@@ -144,7 +144,7 @@ window.gaTitle = 'หน้าแรก';
     <div class="card-body">
       <h4 class="card-title">ข้อมูลการสะสมแต้ม</h4>
 
-      
+
       <div class="table-responsive">
                     <table class="table">
                       <thead>
@@ -171,7 +171,7 @@ window.gaTitle = 'หน้าแรก';
                                                             {{ number_format($u->total_valid_bet_amount, 0) }}
                                                         @endif
                                                         @endif
-                                                      
+
                                                       </td>
                           <td> @if($u->type == 1)
                                                        <span class="text-danger"> - {{ number_format($u->point, 2) }} </span>
@@ -179,15 +179,19 @@ window.gaTitle = 'หน้าแรก';
                                                         <span class="text-success">+ {{ number_format($u->point, 2) }} </span>
                                                         @endif</td>
                           <td>{{ number_format($u->last_point, 2) }} </td>
-                          <td><a href="{{ url('api/del_point_user/'.$u->id) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a></td>
+                          <td>
+                          @if($u->type != 1)
+                          <a href="{{ url('api/del_point_user/'.$u->id) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a>
+                          @endif
+                          </td>
                         </tr>
                         @endforeach
                           @endif
-                       
+
                       </tbody>
                     </table>
                   </div>
-    
+
                   @include('admin.pagination.default', ['paginator' => $point])
 
 
