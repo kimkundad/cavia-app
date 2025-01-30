@@ -239,15 +239,29 @@ class DashboardController extends Controller
         $totalValidBetAmount = floatval($data['total_valid_bet_amount'] ?? 0);
 
         // ตรวจสอบ user_key ว่ามีอยู่หรือไม่
-        $lastPoint = DB::table('points')
-            ->where('user_key', $data['user_key'])
-            ->orderBy('id', 'desc')
-            ->first();
+        // $lastPoint = DB::table('points')
+        //     ->where('user_key', $data['user_key'])
+        //     ->orderBy('id', 'desc')
+        //     ->first();
 
         $user = User::where('phone', $data['user_key'])->first();
 
         // คำนวณ point
         $getPoint = ($totalValidBetAmount * 2) / 100;
+
+
+     //   $lastPointValue = $lastPoint ? $lastPoint->last_point : 0;
+        $newPointValue = $user->point + $getPoint;
+
+        // **บันทึกข้อมูลลงใน points ทุกครั้งที่มีข้อมูลเข้ามา**
+        Point::create([
+            'user_key' => $data['user_key'],
+            'date' => $data['date'],
+            'total_valid_bet_amount' => $totalValidBetAmount,
+            'point' => $getPoint,
+            'last_point' => $newPointValue,
+        ]);
+
 
         if ($user) {
             // เพิ่ม point ให้ user ที่มีอยู่แล้ว
@@ -258,17 +272,17 @@ class DashboardController extends Controller
         }
 
         // คำนวณค่าของ last_point
-        $lastPointValue = $lastPoint ? $lastPoint->last_point : 0;
-        $newPointValue = $lastPointValue + $getPoint;
+        // $lastPointValue = $lastPoint ? $lastPoint->last_point : 0;
+        // $newPointValue = $lastPointValue + $getPoint;
 
-        // **บันทึกข้อมูลลงใน points ทุกครั้งที่มีข้อมูลเข้ามา**
-        Point::create([
-            'user_key' => $data['user_key'],
-            'date' => $data['date'],
-            'total_valid_bet_amount' => $totalValidBetAmount,
-            'point' => $getPoint,
-            'last_point' => $newPointValue,
-        ]);
+        // // **บันทึกข้อมูลลงใน points ทุกครั้งที่มีข้อมูลเข้ามา**
+        // Point::create([
+        //     'user_key' => $data['user_key'],
+        //     'date' => $data['date'],
+        //     'total_valid_bet_amount' => $totalValidBetAmount,
+        //     'point' => $getPoint,
+        //     'last_point' => $newPointValue,
+        // ]);
     });
 }
 
