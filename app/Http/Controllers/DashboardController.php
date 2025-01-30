@@ -19,6 +19,7 @@ use App\Exports\OrderExport;
 use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Log;
 
 class DashboardController extends Controller
 {
@@ -234,6 +235,7 @@ class DashboardController extends Controller
 
     private function processUserPoints(array $data)
 {
+    try {
     DB::transaction(function () use ($data) {
         // แปลง total_valid_bet_amount เป็น float
         $totalValidBetAmount = floatval($data['total_valid_bet_amount'] ?? 0);
@@ -245,13 +247,13 @@ class DashboardController extends Controller
         //     ->first();
 
         $user = User::where('phone', $data['user_key'])->first();
+        $userPoint = $user ? $user->point : 0;
 
         // คำนวณ point
         $getPoint = ($totalValidBetAmount * 2) / 100;
 
-
      //   $lastPointValue = $lastPoint ? $lastPoint->last_point : 0;
-        $newPointValue = $user->point + $getPoint;
+        $newPointValue = $userPoint + $getPoint;
 
         // **บันทึกข้อมูลลงใน points ทุกครั้งที่มีข้อมูลเข้ามา**
         Point::create([
@@ -284,6 +286,16 @@ class DashboardController extends Controller
         //     'last_point' => $newPointValue,
         // ]);
     });
+    } catch (\Exception $e) {
+        // บันทึก Log เมื่อเกิด Error
+        Log::error('Error processing user points', [
+            'user_key' => $data['user_key'] ?? 'N/A',
+            'date' => $data['date'] ?? 'N/A',
+            'total_valid_bet_amount' => $data['total_valid_bet_amount'] ?? 0,
+            'error_message' => $e->getMessage(),
+            'stack_trace' => $e->getTraceAsString(),
+        ]);
+    }
 }
 
 
