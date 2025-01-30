@@ -49,7 +49,7 @@ window.gaTitle = 'หน้าแรก';
 <div class="col-md-12">
   <br /><br />
   <a href="{{ url('/points_export') }}" class="btn btn-success btn-fw" style="float:right"><i class="icon-plus"></i>Export Data</a>
-  
+
 </div>
 
 <div class="col-md-12">
@@ -86,11 +86,15 @@ window.gaTitle = 'หน้าแรก';
                                                         <span class="text-success">+ {{ number_format($u->points, 2) }} </span>
                                                         @endif</td>
                           <td>{{ number_format($u->last_point, 2) }}</td>
-                          <td><a href="{{ url('api/del_point_user_2/'.$u->idp) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a></td>
+                          <td>
+                          @if($u->type != 1)
+                          <a href="{{ url('api/del_point_user_2/'.$u->idp) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a>
+                          @endif
+                          </td>
                         </tr>
                         @endforeach
                           @endif
-                       
+
                       </tbody>
                     </table>
                   </div>
@@ -98,7 +102,7 @@ window.gaTitle = 'หน้าแรก';
                   {{-- @include('admin.pagination.default', ['paginator' => $point]) --}}
 
                   {{ $point->links('admin.pagination.custom') }}
-            
+
 
     </div>
   </div>
