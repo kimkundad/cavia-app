@@ -196,7 +196,7 @@ class UserController extends Controller
         $point = point::where('id', $id)->first();
         DB::table('points')->where('id', $id)->delete();
 
-    //    $user = User::where('phone', $point->user_key)->first();
+        $user = User::where('phone', $point->user_key)->first();
     //    $total_point = 0;
     //    $objs = point::where('user_key', $point->user_key)->get();
 
@@ -226,7 +226,9 @@ class UserController extends Controller
             'xpoint' => 'required'
         ]);
 
-        $get_point = ($request['xpoint']*(2))/100;
+        $totalValidBetAmount = floatval($request['xpoint'] ?? 0);
+
+        $get_point = ($totalValidBetAmount*(2))/100;
 
      //   dd($get_point);
 
@@ -244,20 +246,20 @@ class UserController extends Controller
 
        $user = User::where('phone', $user_key)->first();
 
-       //$total_point = $user->point;
-       $total_point = 0;
+       $total_point = $user->point + $get_point;
+    //    $total_point = 0;
 
-       $objs = point::where('user_key', $user_key)->get();
+    //    $objs = point::where('user_key', $user_key)->get();
 
-       foreach($objs as $u){
-            if($u->type == 0){
-                $total_point += $u->point;
-            }elseif($u->type == 2){
-                $total_point += $u->point;
-            }else{
-                $total_point -= $u->point;
-            }
-       }
+    //    foreach($objs as $u){
+    //         if($u->type == 0){
+    //             $total_point += $u->point;
+    //         }elseif($u->type == 2){
+    //             $total_point += $u->point;
+    //         }else{
+    //             $total_point -= $u->point;
+    //         }
+    //    }
 
        $ob = point::find($package->id);
        $ob->last_point = $total_point;
