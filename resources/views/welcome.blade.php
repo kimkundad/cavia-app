@@ -33,7 +33,7 @@
 
                 @if(isset($slide))
                 @foreach($slide as $u)
-                    <div class="ps-banner--autopart" ><img src="{{ $u->image }}" alt="{{ $u->title }}" class="img-fluid"></div>
+                    <div class="ps-banner--autopart" ><img src="{{ $u->image }}" alt="{{ $u->title }}" class="img-fluid" style="width: 100%;"></div>
                 @endforeach
                 @endif
                 </div>
