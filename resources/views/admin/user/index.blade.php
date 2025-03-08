@@ -73,7 +73,9 @@ window.gaTitle = 'หน้าแรก';
                             </td>
                             <td>
                               <a href="{{ url('admin/users/'.$u->id.'/edit') }}" class="btn btn-outline-primary btn-sm">แก้ไข</a>
+                              @if(Auth::user()->roles[0]->name == 'superadmin')
                               <a href="{{ url('api/del_users/'.$u->id) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a>
+                              @endif
                             </td>
                           </tr>
                           @endforeach

@@ -37,9 +37,27 @@ window.gaTitle = 'หน้าแรก';
           <input type="text" class="form-control" id="exampleInputUsername1" name="name" value="{{ $objs->name }}">
         </div>
 
+
+        <div class="form-group">
+            <label for="exampleFormControlSelect2">ประเภท </label>
+            <select class="form-control" name="type">
+                <option value="0" @if( $objs->type == 0)
+                                        selected='selected'
+                                        @endif>สินค้า</option>
+                <option value="1" @if( $objs->type == 1)
+                                        selected='selected'
+                                        @endif>point to credit</option>
+            </select>
+        </div>
+
         <div class="form-group">
           <label for="exampleInputUsername1">พอยท์ <span class="text-danger">*</span></label>
           <input type="text" class="form-control" id="exampleInputUsername1" name="point" value="{{ $objs->point }}">
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputUsername1">credit <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="exampleInputUsername1" name="credit" value="{{ $objs->credit }}">
         </div>
 
         <div class="form-group">

@@ -9,6 +9,8 @@ use App\Models\order;
 use App\Models\order_detail;
 use App\Models\product;
 use App\Models\User;
+use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -29,7 +31,7 @@ class OrderController extends Controller
                     $u->user_name = $user->name;
                     $u->user_idx = $user->id;
                 }
-                
+
             }
         }
        // dd($objs);
@@ -103,19 +105,41 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        //
-        $package = order::find($id);
-        $package->track_no = $request['track_no'];
-        $package->shipping = $request['shipping'];
-        $package->name_order = $request['name_order'];
-        $package->telephone_order = $request['telephone_order'];
-        $package->address = $request['address'];
-        $package->status = $request['status'];
-        $package->save();
+{
+    $order = order::findOrFail($id);
 
-      return redirect(url('admin/order/'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+    // เก็บค่าเดิมของ Order ก่อนเปลี่ยนแปลง
+    $oldData = $order->toArray();
+
+    // อัปเดตข้อมูล Order
+    $order->track_no = $request['track_no'];
+    $order->shipping = $request['shipping'];
+    $order->name_order = $request['name_order'];
+    $order->telephone_order = $request['telephone_order'];
+    $order->address = $request['address'];
+    $order->status = $request['status'];
+    $order->save();
+
+    // เก็บค่าใหม่หลังจากอัปเดต
+    $newData = $order->toArray();
+
+    // สร้างข้อความ Log แสดงการเปลี่ยนแปลง
+    $changes = [];
+    foreach ($oldData as $key => $value) {
+        if ($oldData[$key] != $newData[$key]) {
+            $changes[] = "$key: จาก '$value' เป็น '" . $newData[$key] . "'";
+        }
     }
+
+    // บันทึก Log
+    ActivityLog::create([
+        'admin_id' => Auth::id(), // Admin ที่แก้ไข
+        'action' => 'อัปเดต Order',
+        'details' => "Admin ".Auth::user()->name." อัปเดต Order ID: {$order->id} " . implode(', ', $changes)
+    ]);
+
+    return redirect(url('admin/order/'))->with('edit_success', 'คุณทำการแก้ไขข้อมูล Order สำเร็จ');
+}
 
     /**
      * Remove the specified resource from storage.

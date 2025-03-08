@@ -98,6 +98,57 @@
         <div class="ps-product-list ps-recommend-for-you mt-40">
             <div class="container">
                 <div class="ps-section__header" >
+                    <h3>เครดิตฟรี</h3>
+
+                </div>
+                <br><br>
+                <div class="ps-shopping-product" style="min-height: 0vh;">
+                                        <div class="row">
+
+                                        @if(isset($credit))
+                                            @foreach($credit as $u)
+                                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3">
+                                                    <div class="ps-product">
+                                                        <div class="ps-product__thumbnail">
+                                                            <a href="javascript:void(0)"
+                                                                onclick="setEventId({{ $u->id }},{{ $u->type }},{{ $u->point }} ,{{ $u->credit }},{{ Auth::user()->point }})"
+                                                                data-id="{{ $u->id }}">
+                                                                <img src="{{ $u->image }}" alt="" />
+                                                            </a>
+                                                        </div>
+                                                        <div class="ps-product__container">
+                                                            <div class="ps-product__content">
+                                                                <a class="ps-product__title" href="javascript:void(0)"
+                                                                    onclick="setEventId({{ $u->id }},{{ $u->type }},{{ $u->point }},{{ $u->credit }},{{ Auth::user()->point }})"
+                                                                    data-id="{{ $u->id }}">{{ $u->name }}</a>
+                                                                <a class="ps-btn" href="javascript:void(0)"
+                                                                    onclick="setEventId({{ $u->id }},{{ $u->type }},{{ $u->point }},{{ $u->credit }},{{ Auth::user()->point }})"
+                                                                    data-id="{{ $u->id }}"
+                                                                    style="padding: 3px 5px; font-size: 12px; margin-top:8px">
+                                                                    {{ number_format($u->point) }}
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @endif
+
+
+
+
+
+                                        </div>
+                                    </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="ps-product-list ps-recommend-for-you mt-40">
+            <div class="container">
+                <div class="ps-section__header" >
                     <h3>รางวัลสุดพรีเมี่ยม</h3>
 
                 </div>
@@ -107,30 +158,33 @@
 
                                         @if(isset($obj))
                                             @foreach($obj as $u)
-                                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 ">
-                                            <div class="ps-product">
-                                                <div class="ps-product__thumbnail"><a
-                                                onclick="setEventId({{ $u->id }})"
-                                                href="javascript:void(0)"
-                                                data-toggle="modal"
-                                                data-target="#product-quickview"
-                                                data-id="{{ $u->id }}"><img src="{{ $u->image }}" alt="" /></a>
-                                                </div>
-                                                <div class="ps-product__container">
-                                                        <div class="ps-product__content">
-                                                            <a class="ps-product__title" href="javascript:void(0)" onclick="setEventId({{ $u->id }})" data-toggle="modal"
-                                                    data-target="#product-quickview"
-                                                    data-id="{{ $u->id }}">{{ $u->name }}</a>
-                                                            <a class="ps-btn" href="javascript:void(0)" onclick="setEventId({{ $u->id }})" data-toggle="modal"
-                                                    data-target="#product-quickview"
-                                                    data-id="{{ $u->id }}" style="padding: 3px 5px;font-size: 12px; margin-top:8px">{{number_format($u->point)}}</a>
+                                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3">
+                                                    <div class="ps-product">
+                                                        <div class="ps-product__thumbnail">
+                                                            <a href="javascript:void(0)"
+                                                                onclick="setEventId({{ $u->id }},{{ $u->type }},{{ $u->point }} ,{{ $u->credit }},{{ Auth::user()->point }})"
+                                                                data-id="{{ $u->id }}">
+                                                                <img src="{{ $u->image }}" alt="" />
+                                                            </a>
                                                         </div>
-
+                                                        <div class="ps-product__container">
+                                                            <div class="ps-product__content">
+                                                                <a class="ps-product__title" href="javascript:void(0)"
+                                                                    onclick="setEventId({{ $u->id }},{{ $u->type }},{{ $u->point }},{{ $u->credit }},{{ Auth::user()->point }})"
+                                                                    data-id="{{ $u->id }}">{{ $u->name }}</a>
+                                                                <a class="ps-btn" href="javascript:void(0)"
+                                                                    onclick="setEventId({{ $u->id }},{{ $u->type }},{{ $u->point }},{{ $u->credit }},{{ Auth::user()->point }})"
+                                                                    data-id="{{ $u->id }}"
+                                                                    style="padding: 3px 5px; font-size: 12px; margin-top:8px">
+                                                                    {{ number_format($u->point) }}
+                                                                </a>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                            </div>
-                                            </div>
+                                                </div>
                                             @endforeach
-                                         @endif
+                                        @endif
+
 
 
 

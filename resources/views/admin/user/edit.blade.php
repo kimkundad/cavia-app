@@ -35,10 +35,15 @@ window.gaTitle = 'หน้าแรก';
           <input type="text" class="form-control" id="exampleInputUsername1" name="phone" value="{{ $objs->phone }}">
         </div>
 
+        @if(Auth::user()->roles[0]->name == 'superadmin')
+
         <div class="form-group">
           <label for="exampleInputUsername1">พอยท์ <span class="text-danger">*</span></label>
           <input type="text" class="form-control" id="exampleInputUsername1" name="point" value="{{ $objs->point }}">
         </div>
+
+        @endif
+
 
 
         <div class="form-group">
@@ -46,17 +51,32 @@ window.gaTitle = 'หน้าแรก';
           <input type="text" class="form-control" id="exampleInputUsername1" name="password" value="{{ $objs->code_user }}">
         </div>
 
+        @if(Auth::user()->roles[0]->name == 'superadmin')
+
+
         <div class="form-group">
             <label for="exampleFormControlSelect2"> Role User </label>
             <select class="form-control" name="status_2">
-                <option value="0" @if( $cat2->role_id == 3)
+                <option value="3" @if( $cat2->role_id == 3)
                                         selected='selected'
                                         @endif>ผู้ใช้งานทั่วไป</option>
-                <option value="1" @if( $cat2->role_id == 1)
+                <option value="2"  @if( $cat2->role_id == 2)
                                         selected='selected'
                                         @endif>แอดมิน</option>
+                <option value="4" @if( $cat2->role_id == 4)
+                                        selected='selected'
+                                        @endif>Operator</option>
+
             </select>
         </div>
+
+        @else
+
+
+
+        @endif
+
+
 
 
 
@@ -73,7 +93,7 @@ window.gaTitle = 'หน้าแรก';
 </div>
 
 
-
+@if(Auth::user()->roles[0]->name == 'superadmin')
 
 <div class="col-md-6">
   <div class="card">
@@ -136,7 +156,7 @@ window.gaTitle = 'หน้าแรก';
 </div>
 
 
-
+@endif
 
 <div class="col-md-12">
   <br><br>
@@ -180,9 +200,9 @@ window.gaTitle = 'หน้าแรก';
                                                         @endif</td>
                           <td>{{ number_format($u->last_point, 2) }} </td>
                           <td>
-                          @if($u->type != 1)
-                          <a href="{{ url('api/del_point_user/'.$u->id) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a>
-                          @endif
+                            @if($u->type != 1)
+                            {{-- <a href="{{ url('api/del_point_user/'.$u->id) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a> --}}
+                            @endif
                           </td>
                         </tr>
                         @endforeach

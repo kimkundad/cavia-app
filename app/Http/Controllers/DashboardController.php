@@ -16,10 +16,16 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Jobs\UserUpPoint;
 use App\Exports\PointsExport;
 use App\Exports\OrderExport;
+use App\Exports\ChangeExport;
+use App\Exports\ActivityLogExport;
+
 use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Log;
+use App\Models\Credit;
+use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -80,6 +86,51 @@ class DashboardController extends Controller
     }
 
 
+    public function changePoint(){
+
+        $objs = Credit::with(['product', 'user'])->orderby('id', 'desc')->paginate(15);
+        $data['objs'] = $objs;
+
+        return view('admin.dashboard.changePoint', $data);
+
+    }
+
+
+    public function credit_status(Request $request)
+{
+    // ค้นหา Credit ตาม ID
+    $credit = Credit::findOrFail($request->credit_id);
+    $oldStatus = $credit->status;
+
+    // สลับค่า status (0 -> 1, 1 -> 0)
+    $credit->status = $credit->status == 1 ? 0 : 1;
+    $credit->save();
+
+    // บันทึก Log
+    ActivityLog::create([
+        'admin_id' => Auth::id(), // ใครเป็นคนทำ
+        'action' => 'เปลี่ยนสถานะ Credit',
+        'details' => "Admin ".Auth::user()->name." เปลี่ยนสถานะของ Credit ID: {$credit->id} จาก {$oldStatus} เป็น {$credit->status}"
+    ]);
+
+    return response()->json([
+        'data' => [
+            'success' => true,
+            'status' => $credit->status
+        ]
+    ]);
+}
+
+    public function activityLog(){
+
+        $adminLogs = ActivityLog::where('admin_id', Auth::id())->paginate(20);
+        $data['logs'] = $adminLogs;
+
+        return view('admin.dashboard.activityLog', $data);
+
+    }
+
+
     public function cleanupOldPoints()
     {
         try {
@@ -101,6 +152,14 @@ class DashboardController extends Controller
                 'message' => 'เกิดข้อผิดพลาด: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function activityLog_export(){
+        return Excel::download(new ActivityLogExport, 'activityLog.xlsx');
+    }
+
+    public function changePoint_export(){
+        return Excel::download(new ChangeExport, 'changePoint.xlsx');
     }
 
 

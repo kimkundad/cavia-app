@@ -61,6 +61,11 @@ class User extends Authenticatable
       return null !== $this->roles()->where('name', $role)->first();
     }
 
+    public function credits()
+    {
+        return $this->hasMany(Credit::class, 'user_id');
+    }
+
     /**
      * The attributes that should be hidden for arrays.
      *

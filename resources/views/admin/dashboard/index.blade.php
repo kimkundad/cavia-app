@@ -95,7 +95,7 @@
             </div>
 
 
-            <div class="col-6 grid-margin">
+            {{-- <div class="col-6 grid-margin">
 
               <div class="card card-statistics">
                 <div class="card-body">
@@ -117,11 +117,11 @@
                       @if(isset($objs))
                       @foreach($objs as $u)
                       <tr>
-                        <td>{{ $u->phone }}</td>  
-                        <td>{{ $u->date_time }}</td>  
-                        <td><img style="height:24px; width:24px" src="{{ url('/img/coin.png') }}" class="chakra-coin2">  {{ number_format($u->coins, 0) }} </td>  
-                      </tr>  
-                      @endforeach                                                                                                                                    
+                        <td>{{ $u->phone }}</td>
+                        <td>{{ $u->date_time }}</td>
+                        <td><img style="height:24px; width:24px" src="{{ url('/img/coin.png') }}" class="chakra-coin2">  {{ number_format($u->coins, 0) }} </td>
+                      </tr>
+                      @endforeach
                       @endif
 
                     </tbody>
@@ -132,14 +132,14 @@
                 </div>
               </div>
 
-            </div>
+            </div> --}}
 
 
           </div>
 
 
-          
-          
+
+
 
 
 

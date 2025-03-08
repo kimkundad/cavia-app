@@ -10,7 +10,8 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\point;
 use Session;
-use Auth;
+use Illuminate\Support\Facades\Auth;
+use App\Models\ActivityLog;
 
 class UserController extends Controller
 {
@@ -76,22 +77,11 @@ class UserController extends Controller
        $package->point = $request['point'];
        $package->save();
 
-       $status_2 = $request['status_2'];
+       $role = Role::find($request->status_2);
 
-       if($status_2 == 0){
-
-        $package
+       $package
        ->roles()
-       ->attach(Role::where('name', 'user')->first());
-
-       }else{
-
-        $package
-       ->roles()
-       ->attach(Role::where('name', 'admin')->first());
-
-       }
-
+       ->attach(Role::where('name', $role->name)->first());
 
        return redirect(url('admin/users/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
@@ -275,85 +265,83 @@ class UserController extends Controller
 
 
     public function update(Request $request, $id)
-    {
-        //
+{
+    // Validate ข้อมูล
+    $this->validate($request, [
+        'phone' => 'required',
+        'password' => 'required'
+    ]);
 
-        $this->validate($request, [
-            'phone' => 'required',
-            'password' => 'required'
-        ]);
+    $user = User::findOrFail($id);
+    $oldData = $user->toArray(); // เก็บค่าเดิมก่อนเปลี่ยนแปลง
 
+    $new_point = 0;
+    $logDetails = [];
 
-        $obj = User::find($id);
-        //dd($obj->point);
+    // กรณีลด Point
+    if ($user->point > $request['point']) {
+        $new_point = $user->point - $request['point'];
 
-        $new_point = 0;
-
-        if($obj->point > $request['point']){
-
-            // - point
-            $new_point = $obj->point - $request['point'];
-
-            $package1 = new point();
-            $package1->user_key = $obj->phone;
+        $package1 = new point();
+            $package1->user_key = $user->phone;
             $package1->date = date('Y-m-d');
             $package1->total_valid_bet_amount = 0;
             $package1->point = $new_point;
             $package1->type = 1;
-            $package1->last_point = $obj->point-$new_point;
-            $package1->detail = 'admin : '.Auth::user()->name.' ( '.Auth::user()->id.' ) ทำการลด point '.$new_point.' user : '.$obj->name;
+            $package1->last_point = $user->point-$new_point;
+            $package1->detail = 'admin : '.Auth::user()->name.' ( '.Auth::user()->id.' ) ทำการลด point '.$new_point.' user : '.$user->name;
             $package1->save();
 
-        }
+        $logDetails[] = "Admin " . Auth::user()->name . " ลด Point จาก " . $user->point . " เหลือ " . $request['point'] . " ให้ User: " . $user->name;
+    }
 
-        if($obj->point < $request['point']){
+    // กรณีเพิ่ม Point
+    if ($user->point < $request['point']) {
+        $new_point = $request['point'] - $user->point;
 
-            // + point
-            $new_point = $request['point'] - $obj->point;
-
-            $package1 = new point();
-            $package1->user_key = $obj->phone;
+        $package1 = new point();
+            $package1->user_key = $user->phone;
             $package1->date = date('Y-m-d');
             $package1->total_valid_bet_amount = 0;
             $package1->point = $new_point;
             $package1->type = 2;
-            $package1->last_point = $obj->point+$new_point;
-            $package1->detail = 'admin : '.Auth::user()->name.' ( '.Auth::user()->id.' ) ทำการเพิ่ม point '.$new_point.' user : '.$obj->name;
+            $package1->last_point = $user->point+$new_point;
+            $package1->detail = 'admin : '.Auth::user()->name.' ( '.Auth::user()->id.' ) ทำการเพิ่ม point '.$new_point.' user : '.$user->name;
             $package1->save();
 
-
-        }
-
-
-            $package = User::find($id);
-            $package->name = $request['name'];
-            $package->phone = $request['phone'];
-            $package->password = Hash::make($request['password']);
-            $package->code_user = $request['password'];
-            $package->point = $request['point'];
-            $package->save();
-
-       // dd($new_point);
-
-
-       $status_2 = $request['status_2'];
-
-       if($status_2 == 0){
-
-        DB::table('role_user')
-        ->where('user_id', $id)
-        ->update(['role_id' => 3]);
-
-       }else{
-
-        DB::table('role_user')
-        ->where('user_id', $id)
-        ->update(['role_id' => 1]);
-
-       }
-
-       return redirect(url('admin/users/'.$id.'/edit'))->with('edit_success','คุณทำการเพิ่มอสังหา สำเร็จ');
+        $logDetails[] = "Admin " . Auth::user()->name . " เพิ่ม Point จาก " . $user->point . " เป็น " . $request['point'] . " ให้ User: " . $user->name;
     }
+
+    // ตรวจสอบการเปลี่ยนแปลงอื่น ๆ
+    if ($user->name !== $request['name']) {
+        $logDetails[] = "ชื่อผู้ใช้เปลี่ยนจาก '{$user->name}' เป็น '{$request['name']}'";
+    }
+    if ($user->phone !== $request['phone']) {
+        $logDetails[] = "เบอร์โทรเปลี่ยนจาก '{$user->phone}' เป็น '{$request['phone']}'";
+    }
+    if (!Hash::check($request['password'], $user->password)) {
+        $logDetails[] = "Admin " . Auth::user()->name . " เปลี่ยนรหัสผ่านให้ User: " . $user->name;
+    }
+
+    // บันทึกการเปลี่ยนแปลง
+    $user->name = $request['name'];
+    $user->phone = $request['phone'];
+    $user->password = Hash::make($request['password']);
+    $user->code_user = $request['password'];
+    $user->point = $request['point'];
+    $user->save();
+
+    // บันทึก Log ถ้ามีการเปลี่ยนแปลง
+    if (!empty($logDetails)) {
+        ActivityLog::create([
+            'admin_id' => Auth::id(), // Admin ที่แก้ไข
+            'action' => 'อัปเดตข้อมูลผู้ใช้',
+            'details' => implode(', ', $logDetails)
+        ]);
+    }
+
+    return redirect(url('admin/users/' . $id . '/edit'))->with('edit_success', 'คุณทำการแก้ไขข้อมูลผู้ใช้สำเร็จ');
+}
 
 
     public function del_user($id)

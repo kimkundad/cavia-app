@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\order_detail;
 use App\Models\slide;
 use App\Models\point;
+use App\Models\Credit;
 use Session;
 use Auth;
 
@@ -38,10 +39,13 @@ class HomeController extends Controller
       $slide = slide::where('status', 1)->orderby('id', 'desc')->get();
         $data['slide'] = $slide;
 
-        $objs = product::where('status', 1)->where('status_2', 0)->orderby('id', 'desc')->get();
+        $objs = product::where('status', 1)->where('status_2', 0)->where('type', 0)->orderby('id', 'desc')->get();
         $data['objs'] = $objs;
 
-        $obj = product::where('status', 1)->where('status_2', 1)->orderby('id', 'desc')->paginate(16);
+        $credit = product::where('status', 1)->where('status_2', 1)->where('type', 1)->orderby('id', 'desc')->get();
+        $data['credit'] = $credit;
+
+        $obj = product::where('status', 1)->where('status_2', 1)->where('type', 0)->orderby('id', 'desc')->paginate(16);
         $data['obj'] = $obj;
 
         return view('welcome', $data);
@@ -342,6 +346,40 @@ class HomeController extends Controller
 
 
     // }
+
+    public function api_change_point(Request $request)
+    {
+        $user = Auth::user(); // ดึงข้อมูลผู้ใช้ที่ล็อกอินอยู่
+
+        // ตรวจสอบว่า Point ของ User เพียงพอหรือไม่
+        if ($user->point < $request->point) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Point ของคุณไม่เพียงพอ'
+            ]);
+        }
+
+        // ลด Point ของ User
+        $user->point -= $request->point;
+        $user->save();
+
+        // บันทึกข้อมูลในตาราง credits
+        $credit = new Credit();
+        $credit->user_id = $user->id;
+        $credit->product_id = $request->product_id;
+        $credit->point = $request->point;
+        $credit->credit = $request->credit;
+        $credit->lastPoint = $user->point; // Point หลังจากหัก
+        $credit->status = 0; // 1 = สำเร็จ
+        $credit->note = "แลก Point เป็น Credit";
+        $credit->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'แลก Point สำเร็จ!',
+            'newPoint' => $user->point
+        ]);
+    }
 
 
     public function add_my_order_product(Request $request)
@@ -785,6 +823,17 @@ class HomeController extends Controller
 
         return view('account.history', $data);
     }
+
+    public function changeCredit(){
+
+        $objs = Credit::with('product')->where('user_id', Auth::user()->id)->orderby('id', 'desc')->paginate(15);
+
+        $data['objs'] = $objs;
+
+        return view('account.change', $data);
+
+    }
+
     public function invoice_detail($id)
     {
 

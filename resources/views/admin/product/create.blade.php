@@ -38,8 +38,21 @@ window.gaTitle = 'หน้าแรก';
         </div>
 
         <div class="form-group">
+            <label for="exampleFormControlSelect2">ประเภท </label>
+            <select class="form-control" name="type">
+                <option value="0" >สินค้า</option>
+                <option value="1" >point to credit</option>
+            </select>
+        </div>
+
+        <div class="form-group">
           <label for="exampleInputUsername1">พอยท์ <span class="text-danger">*</span></label>
           <input type="text" class="form-control" id="exampleInputUsername1" name="point" value="{{ old('point') }}">
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputUsername1">credit <span class="text-danger">* </span></label>
+          <input type="text" class="form-control" id="exampleInputUsername1" name="credit" value="{{ old('credit') }}">
         </div>
 
         <div class="form-group">
@@ -67,9 +80,9 @@ window.gaTitle = 'หน้าแรก';
             </select>
         </div>
 
-    
-        
-        
+
+
+
         <br />
 
 

@@ -46,15 +46,43 @@ window.gaTitle = 'หน้าแรก';
           <input type="text" class="form-control" id="exampleInputUsername1" name="password" value="{{ $pass }}">
         </div>
 
+        @if(Auth::user()->roles[0]->name == 'superadmin')
+
         <div class="form-group">
             <label for="exampleFormControlSelect2"> Role User </label>
             <select class="form-control" name="status_2">
-                <option value="0">ผู้ใช้งานทั่วไป</option>
-                <option value="1">แอดมิน</option>
+                <option value="3">ผู้ใช้งานทั่วไป</option>
+                <option value="2">แอดมิน</option>
+                <option value="4">Operator</option>
+
             </select>
         </div>
 
-        
+        @elseif(Auth::user()->roles[0]->name == 'admin')
+
+        <div class="form-group">
+            <label for="exampleFormControlSelect2"> Role User </label>
+            <select class="form-control" name="status_2">
+                <option value="3">ผู้ใช้งานทั่วไป</option>
+                <option value="4">Operator</option>
+
+            </select>
+        </div>
+
+        @else
+
+        <div class="form-group">
+            <label for="exampleFormControlSelect2"> Role User </label>
+            <select class="form-control" name="status_2">
+                <option value="3">ผู้ใช้งานทั่วไป</option>
+            </select>
+        </div>
+
+        @endif
+
+
+
+
 
 
         <div style="text-align: right;">

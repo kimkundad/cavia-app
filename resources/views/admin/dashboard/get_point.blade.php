@@ -14,6 +14,7 @@ window.gaTitle = 'หน้าแรก';
 
 <div class="row">
 
+@if(Auth::user()->roles[0]->name == 'superadmin' || Auth::user()->roles[0]->name == 'admin')
 
 <div class="col-md-12">
   <br><br>
@@ -44,6 +45,8 @@ window.gaTitle = 'หน้าแรก';
     </div>
   </div>
 </div>
+
+@endif
 
 
 <div class="col-md-12">
@@ -88,7 +91,9 @@ window.gaTitle = 'หน้าแรก';
                           <td>{{ number_format($u->last_point, 2) }}</td>
                           <td>
                           @if($u->type != 1)
-                          <a href="{{ url('api/del_point_user_2/'.$u->idp) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a>
+                            @if(Auth::user()->roles[0]->name == 'superadmin')
+                                <a href="{{ url('api/del_point_user_2/'.$u->idp) }}" onclick="return confirm('Are you sure?')" class="btn btn-outline-danger btn-sm">ลบ</a>
+                            @endif
                           @endif
                           </td>
                         </tr>

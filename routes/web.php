@@ -46,6 +46,10 @@ Route::get('api/data_wheel', [App\Http\Controllers\ServiceController::class, 'da
 
 Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
 
+    Route::post('/api_change_point', [App\Http\Controllers\HomeController::class, 'api_change_point']);
+
+    Route::get('/changeCredit', [App\Http\Controllers\HomeController::class, 'changeCredit'])->name('changeCredit');
+
     Route::get('/checkout_product/{id}', [App\Http\Controllers\HomeController::class, 'checkout_product'])->name('checkout_product');
 
     Route::get('api/addwheelresult', [App\Http\Controllers\ServiceController::class, 'addwheelresult'])->name('addwheelresult');
@@ -95,15 +99,26 @@ Route::group(['middleware' => ['auth' ,'checksinglesession']], function () {
 
 });
 
-Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
-
+Route::group(['middleware' => ['UserRole:superadmin|admin|operator']], function() {
 
     Route::get('/points_export', [App\Http\Controllers\DashboardController::class, 'points_export'])->name('points_export');
     Route::get('/orders_export', [App\Http\Controllers\DashboardController::class, 'orders_export'])->name('orders_export');
+    Route::get('/changePoint_export', [App\Http\Controllers\DashboardController::class, 'changePoint_export'])->name('changePoint_export');
+    Route::get('/activityLog_export', [App\Http\Controllers\DashboardController::class, 'activityLog_export'])->name('activityLog_export');
+
+    Route::get('/admin/activityLog', [App\Http\Controllers\DashboardController::class, 'activityLog']);
+    Route::get('/admin/creditProduct', [App\Http\Controllers\ProductController::class, 'creditProduct']);
+
+
 
     Route::post('/import', [App\Http\Controllers\DashboardController::class, 'import'])->name('import');
 
     Route::get('/admin/dashboard', [App\Http\Controllers\DashboardController::class, 'index']);
+
+    Route::get('/admin/changePoint', [App\Http\Controllers\DashboardController::class, 'changePoint']);
+
+
+
     Route::resource('/admin/product', App\Http\Controllers\ProductController::class);
     Route::post('/api/product_status', [App\Http\Controllers\ProductController::class, 'product_status'])->name('product_status');
     Route::get('api/del_product/{id}', [App\Http\Controllers\ProductController::class, 'del_product'])->name('del_product');
@@ -120,6 +135,9 @@ Route::group(['middleware' => ['UserRole:superadmin|admin']], function() {
 
     Route::resource('/admin/slide_show', App\Http\Controllers\SlideController::class);
     Route::post('api/slide_status', [App\Http\Controllers\SlideController::class, 'slide_status'])->name('slide_status');
+    Route::post('api/credit_status', [App\Http\Controllers\DashboardController::class, 'credit_status'])->name('credit_status');
+
+
     Route::get('api/del_slide/{id}', [App\Http\Controllers\SlideController::class, 'del_slide'])->name('del_slide');
 
     Route::resource('/admin/order', App\Http\Controllers\OrderController::class);

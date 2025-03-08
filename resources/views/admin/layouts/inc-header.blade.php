@@ -13,17 +13,18 @@
                   MENU
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-             
+
                   <a href="{{ url('admin/dashboard') }}" class="dropdown-item"><i class="link-icon text-primary icon-pie-chart mr-2"></i><span class="menu-title">หน้าแรก</span></a>
                   <a href="{{ url('admin/product') }}" class="dropdown-item"><i class="link-icon text-primary icon-drawer mr-2"></i><span class="menu-title">สินค้า</span></a>
+                  <a href="{{ url('admin/creditProduct') }}" class="dropdown-item"><i class="link-icon text-primary icon-drawer mr-2"></i><span class="menu-title">สินค้า Credit</span></a>
                   <a href="{{ url('admin/order') }}" class="dropdown-item"><i class="link-icon text-primary icon-wallet mr-2"></i><span class="menu-title">รายการแลกของ</span></a>
-                  <a href="{{ url('admin/wheel') }}" class="dropdown-item"><i class="link-icon text-primary icon-fire mr-2"></i><span class="menu-title">ตั้งค่ากงล้ม</span></a>
-                  <a href="{{ url('admin/point_checkin') }}" class="dropdown-item"><i class="link-icon text-primary icon-trophy mr-2"></i><span class="menu-title">เช็คอิน</span></a>
+                  <a href="{{ url('admin/activityLog') }}" class="dropdown-item"><i class="link-icon text-primary icon-fire mr-2"></i><span class="menu-title">ActivityLog</span></a>
+                  <a href="{{ url('admin/changePoint') }}" class="dropdown-item"><i class="link-icon text-primary icon-trophy mr-2"></i><span class="menu-title">แลกเครดิต</span></a>
                   <a href="{{ url('admin/slide_show') }}" class="dropdown-item"><i class="link-icon text-primary icon-disc mr-2"></i><span class="menu-title">รูปสไลด์</span></a>
                   <a href="{{ url('admin/get_point') }}" class="dropdown-item"><i class="link-icon text-primary icon-magic-wand mr-2"></i><span class="menu-title">สะสมแต้มทั้งหมด</span></a>
                   <a href="{{ url('admin/setting') }}" class="dropdown-item"><i class="link-icon text-primary icon-people mr-2"></i><span class="menu-title">ตั้งค่า</span></a>
-                  
-                  
+
+
                 </div>
               </li>
             </ul>
@@ -37,8 +38,8 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                   <a class="dropdown-item">
-                    
-					
+
+
                   </a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{{ url('logout') }}">
@@ -60,9 +61,13 @@
             <li class="nav-item">
               <a href="{{ url('admin/dashboard') }}" class="nav-link"><i class="link-icon icon-pie-chart"></i><span class="menu-title">หน้าแรก</span></a>
             </li>
-           
+
             <li class="nav-item">
               <a href="{{ url('admin/product') }}" class="nav-link"><i class="link-icon icon-drawer"></i><span class="menu-title">สินค้า</span></a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{{ url('admin/creditProduct') }}" class="nav-link"><i class="link-icon icon-drawer"></i><span class="menu-title">สินค้า Credit</span></a>
             </li>
 
             <li class="nav-item">
@@ -73,12 +78,14 @@
               <a href="{{ url('admin/slide_show') }}" class="nav-link"><i class="link-icon icon-disc"></i><span class="menu-title">รูปสไลด์</span></a>
             </li>
 
+            @if(Auth::user()->roles[0]->name == 'superadmin')
             <li class="nav-item">
-              <a href="{{ url('admin/wheel') }}" class="nav-link"><i class="link-icon icon-fire"></i><span class="menu-title">ตั้งค่ากงล้ม</span></a>
+              <a href="{{ url('admin/activityLog') }}" class="nav-link"><i class="link-icon icon-fire"></i><span class="menu-title">ActivityLog</span></a>
             </li>
+            @endif
 
             <li class="nav-item">
-              <a href="{{ url('admin/point_checkin') }}" class="nav-link"><i class="link-icon icon-trophy"></i><span class="menu-title">เช็คอิน</span></a>
+              <a href="{{ url('admin/changePoint') }}" class="nav-link"><i class="link-icon icon-trophy"></i><span class="menu-title">แลกเครดิต</span></a>
             </li>
 
             <li class="nav-item">
@@ -89,13 +96,13 @@
               <a href="{{ url('admin/users') }}" class="nav-link"><i class="link-icon icon-people"></i><span class="menu-title">ผู้ใช้งาน</span></a>
             </li>
 
-           
+
 
             <li class="nav-item">
               <a href="{{ url('admin/setting') }}" class="nav-link"><i class="link-icon icon-settings"></i><span class="menu-title">ตั้งค่า</span></a>
             </li>
-            
-			
+
+
 
 
 

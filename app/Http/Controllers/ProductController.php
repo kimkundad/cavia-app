@@ -7,6 +7,8 @@ use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Facades\DB;
 use App\Models\product;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use App\Models\ActivityLog;
 
 class ProductController extends Controller
 {
@@ -18,11 +20,22 @@ class ProductController extends Controller
     public function index()
     {
         //
-        $count = product::count();
-        $objs = product::orderby('id', 'desc')->paginate(15);
+        $count = product::where('type', 0)->count();
+        $objs = product::where('type', 0)->orderby('id', 'desc')->paginate(15);
         $data['objs'] = $objs;
         $data['count'] = $count;
         return view('admin.product.index', $data);
+    }
+
+
+    public function creditProduct(){
+
+        $count = product::where('type', 1)->count();
+        $objs = product::where('type', 1)->orderby('id', 'desc')->paginate(15);
+        $data['objs'] = $objs;
+        $data['count'] = $count;
+        return view('admin.product.creditProduct', $data);
+
     }
 
 
@@ -91,25 +104,33 @@ class ProductController extends Controller
     }
 
 
-    public function product_status(Request $request){
+    public function product_status(Request $request)
+{
+    $product = product::findOrFail($request->user_id);
+    $oldStatus = $product->status;
 
-        //  dd($request->all());
+    // สลับค่า status (0 -> 1, 1 -> 0)
+    $product->status = $product->status == 1 ? 0 : 1;
+    $product->save();
 
-          $user = product::findOrFail($request->user_id);
+    // แปลงค่า status เป็นข้อความที่เข้าใจง่าย
+    $statusText = $product->status == 1 ? 'เปิดใช้งาน' : 'ปิดใช้งาน';
+    $oldStatusText = $oldStatus == 1 ? 'เปิดใช้งาน' : 'ปิดใช้งาน';
 
-                  if($user->status == 1){
-                      $user->status = 0;
-                  } else {
-                      $user->status = 1;
-                  }
+    // บันทึก Log
+    ActivityLog::create([
+        'admin_id' => Auth::id(), // Admin ที่แก้ไข
+        'action' => 'เปลี่ยนสถานะสินค้า',
+        'details' => "Admin ".Auth::user()->name." เปลี่ยนสถานะของสินค้า '{$product->name}' จาก '{$oldStatusText}' เป็น '{$statusText}'"
+    ]);
 
-          return response()->json([
-          'data' => [
-            'success' => $user->save(),
-          ]
-        ]);
-
-        }
+    return response()->json([
+        'data' => [
+            'success' => true,
+            'status' => $product->status
+        ]
+    ]);
+}
 
     /**
      * Store a newly created resource in storage.
@@ -139,6 +160,8 @@ class ProductController extends Controller
     $product->detail = $request->input('detail');
     $product->stock = $request->input('stock');
     $product->point = $request->input('point');
+    $product->type = $request->input('type');
+    $product->credit = $request->input('credit');
     $product->status_2 = $request->input('status_2');
     $product->image = $filename; // Store image URL
     $product->save();
@@ -218,6 +241,8 @@ class ProductController extends Controller
     $product->detail = $request->input('detail');
     $product->stock = $request->input('stock');
     $product->point = $request->input('point');
+    $product->type = $request->input('type');
+    $product->credit = $request->input('credit');
     $product->status_2 = $request->input('status_2', false);
     $product->save();
 

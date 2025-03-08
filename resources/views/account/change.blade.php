@@ -27,7 +27,7 @@
                 <ul class="breadcrumb">
                     <li><a href="{{ url('/') }}">หน้าหลัก</a></li>
                     <li><a href="{{ url('/account') }}">Account</a></li>
-                    <li>ประวัติการแลกเปลี่ยน</li>
+                    <li>ประวัติการแลก Credit</li>
                 </ul>
             </div>
         </div>
@@ -47,8 +47,8 @@
                                 <div class="ps-widget__content">
                                     <ul>
                                         <li><a href="{{ url('account') }}"><i class="icon-user"></i> ข้อมูลบัญชี</a></li>
-                                        <li class="active"><a href="{{ url('history') }}"><i class="icon-papers"></i> ประวัติการแลกเปลี่ยน</a></li>
-                                        <li><a href="{{ url('changeCredit') }}"><i class="icon-papers"></i> ประวัติการแลก Credit</a></li>
+                                        <li class=""><a href="{{ url('history') }}"><i class="icon-papers"></i> ประวัติการแลกเปลี่ยน</a></li>
+                                        <li class="active"><a href="{{ url('changeCredit') }}"><i class="icon-papers"></i> ประวัติการแลก Credit</a></li>
                                         <li><a href="{{ url('my_point') }}"><i class="icon-papers"></i> สะสมแต้ม</a></li>
                                         {{-- <li><a href="{{ url('point_rewards') }}"><img src="{{ url('/img/coin.png') }}" class="chakra-coin">  Point Rewards</a></li> --}}
                                         <li><a href="{{ url('logout') }}"><i class="icon-power-switch"></i>ออกจากระบบ</a></li>
@@ -61,7 +61,7 @@
                         <div class="ps-section__right">
                             <div class="ps-section--account-setting">
                                 <div class="ps-section__header">
-                                    <h3>ประวัติการแลกเปลี่ยน</h3>
+                                    <h3>ประวัติการแลก Credit</h3>
                                 </div>
                                 <div class="ps-section__content">
                                     <div class="table-responsive">
@@ -70,10 +70,11 @@
                                                 <tr>
                                                     <th>Id</th>
                                                     <th>วันที่แลก</th>
-                                                    <th>สินค้า</th>
+                                                    <th>ชื่อ credit</th>
+                                                    <th>credit</th>
                                                     <th>point</th>
-                                                    <th>Status</th>
-                                                    <th></th>
+                                                    <th>point ของฉันล่าสุด</th>
+                                                    <th>สถานะ</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -81,45 +82,25 @@
                                             @if(isset($objs))
                                             @foreach($objs as $u)
                                                 <tr>
-                                                    <td><a href="{{ url('invoice_detail/'.$u->order_no) }}" class="text-primary">{{ $u->order_no }}</a></td>
-                                                    <td>{{ formatDateThat($u->created_at) }}</td>
-                                                    <td><a href="{{ url('invoice_detail/'.$u->order_no) }}">
+                                                    <td>#{{ $u->id }}</td>
+                                                    <td>{{ $u->created_at }}</td>
 
-                                                    @if(isset($u->option))
-                                                        @foreach($u->option as $j)
-                                                        {{ $j->pro_name }},
-                                                        @endforeach
-                                                    @endif
-
-                                                    </a></td>
-
-                                                    <td>{{ number_format((float)$u->sum_point, 0, '.', '') }}</td>
-
-
+                                                    <td>{{ $u->product->name }}</td>
+                                                    <td>{{ $u->credit }}</td>
+                                                    <td>{{ $u->point }}</td>
+                                                    <td>{{ $u->lastPoint }}</td>
                                                     @if($u->status == 0)
                                                     <td class="text-warning">
                                                         รอเจ้าหน้าที่ตรวจสอบ
                                                     </td>
                                                     @endif
                                                     @if($u->status == 1)
-                                                    <td class="text-warning">
-                                                    อยู่ระหว่างการจัดส่ง
-                                                    </td>
-                                                    @endif
-                                                    @if($u->status == 2)
                                                     <td class="text-success">
-                                                    จัดสั่งสำเร็จ
-                                                    </td>
-                                                    @endif
-                                                    @if($u->status == 3)
-                                                    <td class="text-danger">
-                                                    คืนสินค้า
+                                                    สำเร็จ
                                                     </td>
                                                     @endif
 
-                                                    <td>
-                                                        <a class="ps-btn" href="{{ url('invoice_detail/'.$u->order_no) }}" style="padding: 5px 15px;font-size: 12px;">ดูข้อมูล</a>
-                                                    </td>
+
                                                 </tr>
                                                 @endforeach
                                             @endif

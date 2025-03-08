@@ -21,7 +21,7 @@ class CreateOrdersTable extends Migration
             $table->string('sum_point')->nullable();
             $table->text('name_product')->nullable();
             $table->string('shipping')->nullable();
-            $table->string('name_order')->nullable(); 
+            $table->string('name_order')->nullable();
             $table->string('gift')->nullable();
             $table->string('telephone_order')->nullable();
             $table->text('address')->nullable();

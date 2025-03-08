@@ -8,7 +8,7 @@
 
 <style>
     .ps-block__header p {
-       color:#000 
+       color:#000
     }
     .img-fluid{
         width:100%;
@@ -33,7 +33,7 @@
         margin: 5px
     }
     .pcmall-dailycheckin{
-        
+
         width: 100%;
         text-align: center;
         border-radius: 4px;
@@ -102,7 +102,7 @@
     height: 20px;
 }
     .pcmall-dailycheckin{
-        
+
         width: 100%;
         text-align: center;
         border-radius: 4px;
@@ -156,7 +156,7 @@
     <main class="ps-page--my-account">
         <div class="ps-breadcrumb">
             <div class="container">
-                
+
                 <ul class="breadcrumb">
                     <li><a href="{{ url('/') }}">หน้าหลัก</a></li>
                     <li><a href="{{ url('/account') }}">Account</a></li>
@@ -181,6 +181,7 @@
                                     <ul>
                                         <li><a href="{{ url('account') }}"><i class="icon-user"></i> ข้อมูลบัญชี</a></li>
                                         <li><a href="{{ url('history') }}"><i class="icon-papers"></i> ประวัติการแลกเปลี่ยน</a></li>
+                                        <li><a href="{{ url('changeCredit') }}"><i class="icon-papers"></i> ประวัติการแลก Credit</a></li>
                                         <li><a href="{{ url('my_point') }}"><i class="icon-papers"></i> สะสมแต้ม</a></li>
                                         {{-- <li class="active"><a href="{{ url('point_rewards') }}"><img src="{{ url('/img/coin.png') }}" class="chakra-coin">  Point Rewards</a></li> --}}
                                         <li><a href="{{ url('logout') }}"><i class="icon-power-switch"></i>ออกจากระบบ</a></li>
@@ -189,7 +190,7 @@
                             </aside>
                         </div>
                     </div>
-                    
+
                     <div class="col-lg-9">
                         <div class="ps-section__right">
                             <div class="ps-section--account-setting">
@@ -197,22 +198,22 @@
                                     <h3><img src="{{ url('/img/coin.png') }}" class="chakra-coin"> เช็คอินทุกวันเพื่อรับ Points</h3>
                                 </div>
                                 <div class="ps-section__content">
-                                    
+
                                 <div class="card-yello text-center">
                                     <h4 class="text-white">Cavia168 Point Rewards</h4>
                                     <div class="d-flex justify-content-center">
                                         <img src="{{ url('/img/coin.png') }}" style="height: 40px; margin-right:15px">
                                         <h2 class="text-white" id="my_point_old">{{number_format((float)Auth::user()->point, 0, '.', '')}}</h2>
                                     </div>
-                                    
-                                    
+
+
                                     <div class="card-wh">
                                         <div class="d-flex justify-content-center">
 
                                             @for ($i = 1; $i <= 7; $i++)
 
                                             <div class="pcmall">
-                                                <div class="pcmall-dailycheckin 
+                                                <div class="pcmall-dailycheckin
                                                 @if($i <= $check_point_day)
                                                 active
                                                 @endif
@@ -233,11 +234,11 @@
 
                                             @endfor
 
-                                  
+
 
 
                                             {{-- <div class="pcmall">
-                                                <div class="pcmall-dailycheckin 
+                                                <div class="pcmall-dailycheckin
                                                 @if($check_point_day == 0 || $check_point_day > 0)
                                                 active
                                                 @endif
@@ -250,7 +251,7 @@
                                                 <span>วันที่ 1</span>
                                             </div>
                                             <div class="pcmall">
-                                                <div class="pcmall-dailycheckin 
+                                                <div class="pcmall-dailycheckin
                                                 @if($next_day > 1)
                                                 active
                                                 @endif
@@ -329,7 +330,7 @@
                                             </div> --}}
 
                                         </div>
-                                        <button class="pcmall-dailycheckin_btn" id="dailycheckin_btn" 
+                                        <button class="pcmall-dailycheckin_btn" id="dailycheckin_btn"
                                         @if($check_point == 0)
                                         data-inactive="false"
                                         @else
@@ -341,8 +342,8 @@
 
                                 </div>
 
-                                    
-                                    
+
+
                                 </div>
                             </div>
                             <br>
@@ -353,7 +354,7 @@
             </div>
         </section>
 
-        
+
 
     </main>
 
@@ -380,7 +381,7 @@ const PostPoint = async() => {
             success: function (data) {
 
               result = data;
-              
+
             }
         });
         return result;
