@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\product;
+use App\Models\Product;
 use App\Models\order;
 use App\Models\User;
 use App\Models\order_detail;
@@ -39,13 +39,13 @@ class HomeController extends Controller
       $slide = slide::where('status', 1)->orderby('id', 'desc')->get();
         $data['slide'] = $slide;
 
-        $objs = product::where('status', 1)->where('status_2', 0)->where('type', 0)->orderby('id', 'desc')->get();
+        $objs = Product::where('status', 1)->where('status_2', 0)->where('type', 0)->orderby('id', 'desc')->get();
         $data['objs'] = $objs;
 
-        $credit = product::where('status', 1)->where('status_2', 1)->where('type', 1)->orderby('id', 'desc')->get();
+        $credit = Product::where('status', 1)->where('status_2', 1)->where('type', 1)->orderby('id', 'desc')->get();
         $data['credit'] = $credit;
 
-        $obj = product::where('status', 1)->where('status_2', 1)->where('type', 0)->orderby('id', 'desc')->paginate(16);
+        $obj = Product::where('status', 1)->where('status_2', 1)->where('type', 0)->orderby('id', 'desc')->paginate(16);
         $data['obj'] = $obj;
 
         return view('welcome', $data);
@@ -224,7 +224,7 @@ class HomeController extends Controller
 
     public function get_modal($id){
 
-        $objs = product::where('id', $id)->first();
+        $objs = Product::where('id', $id)->first();
         $data['objs'] = $objs;
         return view('modal', $data);
     }
@@ -237,7 +237,7 @@ class HomeController extends Controller
     //         'address' => 'required'
     //     ]);
 
-    //     $pro = product::where('id', $request->proid)->first();
+    //     $pro = Product::where('id', $request->proid)->first();
 
     //     if($pro){
 
@@ -393,7 +393,7 @@ class HomeController extends Controller
     ]);
 
     // ดึงข้อมูลสินค้า
-    $product = product::find($request->proid);
+    $product = Product::find($request->proid);
 
     if (!$product) {
         return redirect(url('add_to_checkout/'.$request->proid))->with('pay_error', 'ไม่พบสินค้า.');
@@ -602,7 +602,7 @@ class HomeController extends Controller
 
             $total_pro = 0;
 
-            $get_p = product::where('id', $product_item['id'])->first();
+            $get_p = Product::where('id', $product_item['id'])->first();
 
             $total_pro = ($get_p->stock - 1);
 
