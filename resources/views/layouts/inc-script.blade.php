@@ -156,7 +156,7 @@ $(document).ready(function(){
                         if (response.success) {
                             Swal.fire({
                                 title: "แลก Point สำเร็จ!",
-                                text: `คุณได้รับ Credit จำนวน ${credit} แล้ว`,
+                                text: `รายการแลกเครดิตจะถูกปรับให้ทุกเที่ยงคืนของวันถัดไป`,
                                 icon: "success"
                             }).then(() => {
                                 location.reload(); // รีโหลดหน้าหลังจากแลกสำเร็จ
