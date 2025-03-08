@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Facades\DB;
-use App\Models\product;
+use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ActivityLog;
@@ -20,8 +20,8 @@ class ProductController extends Controller
     public function index()
     {
         //
-        $count = product::where('type', 0)->count();
-        $objs = product::where('type', 0)->orderby('id', 'desc')->paginate(15);
+        $count = Product::where('type', 0)->count();
+        $objs = Product::where('type', 0)->orderby('id', 'desc')->paginate(15);
         $data['objs'] = $objs;
         $data['count'] = $count;
         return view('admin.product.index', $data);
@@ -30,8 +30,8 @@ class ProductController extends Controller
 
     public function creditProduct(){
 
-        $count = product::where('type', 1)->count();
-        $objs = product::where('type', 1)->orderby('id', 'desc')->paginate(15);
+        $count = Product::where('type', 1)->count();
+        $objs = Product::where('type', 1)->orderby('id', 'desc')->paginate(15);
         $data['objs'] = $objs;
         $data['count'] = $count;
         return view('admin.product.creditProduct', $data);
@@ -106,7 +106,7 @@ class ProductController extends Controller
 
     public function product_status(Request $request)
 {
-    $product = product::findOrFail($request->user_id);
+    $product = Product::findOrFail($request->user_id);
     $oldStatus = $product->status;
 
     // สลับค่า status (0 -> 1, 1 -> 0)
@@ -220,7 +220,7 @@ class ProductController extends Controller
         ]);
 
         // ค้นหา Product
-    $product = product::findOrFail($id);
+    $product = Product::findOrFail($id);
 
     // Update image if provided
     if ($request->hasFile('image')) {
