@@ -24,3 +24,4 @@ class Credit extends Model
     }
 
 }
+
