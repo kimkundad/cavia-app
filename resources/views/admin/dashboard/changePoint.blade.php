@@ -63,7 +63,7 @@ window.gaTitle = 'หน้าแรก';
                                 <input class="checkbox" type="checkbox" @if($u->status == 1)
                                   checked="checked"
                                   @endif>
-                                ปิด / เปิด
+                                รอตรวจสอบ / ตรวจสอบแล้ว
                               </label>
                             </div>
                             </td>
