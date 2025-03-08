@@ -79,7 +79,7 @@ class DashboardController extends Controller
         $order = order::count();
         $data['order'] = $order;
 
-        $product = product::count();
+        $product = Product::count();
         $data['product'] = $product;
 
         $data['sum'] = 1;
