@@ -50,7 +50,7 @@ window.gaTitle = 'หน้าแรก';
                             <td>#{{ $u->id }}</td>
                                                     <td>{{ $u->created_at }}</td>
                                                     <td><a href="{{ url('admin/users/'.$u->user->id.'/edit') }}">{{$u->user->name}}</a></td>
-                                                    <td>{{ $u->product->name }}</td>
+                                                    <td>{{ $u->product ? $u->product->name : 'สินค้าถูกลบ' }}</td>
                                                     <td>{{ $u->credit }}</td>
                                                     <td>{{ $u->point }}</td>
                                                     <td>{{ $u->lastPoint }}</td>
