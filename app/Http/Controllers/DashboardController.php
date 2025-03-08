@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\slide;
 use App\Models\order;
 use App\Models\point;
-use App\Models\product;
+use App\Models\Product;
 use App\Models\wheelsetting;
 use App\Imports\UsersImport;
 use App\Models\point_reward;
