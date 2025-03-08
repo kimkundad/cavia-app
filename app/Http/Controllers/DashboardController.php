@@ -124,7 +124,7 @@ class DashboardController extends Controller
 
     public function activityLog(){
 
-        $adminLogs = ActivityLog::where('admin_id', Auth::id())->paginate(20);
+        $adminLogs = ActivityLog::where('admin_id', Auth::id())->orderby('id', 'desc')->paginate(20);
         $data['logs'] = $adminLogs;
 
         return view('admin.dashboard.activityLog', $data);
