@@ -18,13 +18,30 @@ class UserController extends Controller
     //
     public function index()
     {
+        $userRole = Auth::user()->roles[0]->name; // ดึง Role ของ User ที่ Login
 
-        $count_user = User::where('id', '!=', 1 )->where('id', '!=', 2 )->orderby('id', 'desc')->count();
-        $data['count_user'] = $count_user;
+        // เริ่ม Query โดยไม่แสดง SuperAdmin (role_id = 1)
+        $query = User::whereNotIn('id', function ($q) {
+            $q->select('user_id')->from('role_user')->where('role_id', 1);
+        });
 
-        $objs = User::where('id', '!=', 1 )->where('id', '!=', 2 )->orderby('id', 'desc')->paginate(15);
-        $data['objs'] = $objs;
-        return view('admin.user.index', $data);
+        // ถ้าเป็น Operator ให้แสดงเฉพาะลูกค้า (role_id = 3)
+        if ($userRole === 'operator') {
+            $query->whereHas('roles', function ($q) {
+                $q->where('role_id', 3);
+            });
+        }
+
+        // นับจำนวน User ที่พบ
+        $count_user = $query->count();
+
+        // ดึงข้อมูล User
+        $objs = $query->orderBy('id', 'desc')->paginate(15);
+
+        return view('admin.user.index', [
+            'count_user' => $count_user,
+            'objs' => $objs
+        ]);
     }
 
     public function create()
@@ -37,22 +54,36 @@ class UserController extends Controller
     }
 
 
-    public function user_search(Request $request){
 
-        $this->validate($request, [
-          'search' => 'required'
-        ]);
-        $search = $request->get('search');
+    public function user_search(Request $request)
+{
+    $this->validate($request, [
+        'search' => 'required'
+    ]);
 
-              $cat = DB::table('users')
-                    ->where('name', 'like', "%$search%")
-                    ->paginate(15);
+    $search = $request->get('search');
+    $userRole = Auth::user()->roles[0]->name; // ดึง Role ของผู้ใช้ที่ Login
 
-              $data['objs'] = $cat;
-              $data['search'] = $search;
+    // เริ่มต้น Query ค้นหา User
+    $query = User::where('name', 'like', "%$search%");
 
-              return view('admin.user.search', $data);
-      }
+    // กรองไม่ให้ค้นหา SuperAdmin (role_id = 1)
+    $query->whereNotIn('id', function ($q) {
+        $q->select('user_id')->from('role_user')->where('role_id', 1);
+    });
+
+    // ถ้าเป็น Operator ค้นหาได้แค่ลูกค้า (role_id = 3)
+    if ($userRole === 'operator') {
+        $query->whereHas('roles', function ($q) {
+            $q->where('role_id', 3);
+        });
+    }
+
+    // ดึงข้อมูลตามเงื่อนไขทั้งหมด
+    $cat = $query->paginate(15);
+
+    return view('admin.user.search', ['objs' => $cat, 'search' => $search]);
+}
 
 
     public function store(Request $request)

@@ -34,11 +34,11 @@ window.gaTitle = 'หน้าแรก';
                   <br /><br />
                 </div>
 
-                
+
                 <div class="col-md-12 grid-margin stretch-card">
                   <div class="card">
                     <div class="card-body">
-                      <h4 class="card-title">ผู้ใช้งานทั้งหมด ( {{ count($objs) }} )</h4>
+                      <h4 class="card-title">ผู้ใช้งานทั้งหมด ( {{ count($objs) }} ) {{ Auth::user()->roles[0]->name }}</h4>
 
                       <div class="table-responsive">
 
@@ -55,7 +55,7 @@ window.gaTitle = 'หน้าแรก';
                           </tr>
                         </thead>
                         <tbody>
-                      
+
 						@if(isset($objs))
                       @foreach($objs as $u)
                           <tr access_id="{{$u->id}}">
@@ -82,7 +82,7 @@ window.gaTitle = 'หน้าแรก';
                         </tbody>
                       </table>
                       </div>
-					  
+
                     </div>
                   </div>
                 </div>

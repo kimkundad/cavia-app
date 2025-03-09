@@ -49,7 +49,15 @@ window.gaTitle = 'หน้าแรก';
                           <tr access_id="{{$u->id}}">
                             <td>#{{ $u->id }}</td>
                                                     <td>{{ $u->created_at }}</td>
-                                                    <td><a href="{{ url('admin/users/'.$u->user->id.'/edit') }}">{{$u->user->name}}</a></td>
+                                                    <td>
+                                                        @if($u->user)
+                                                            <a href="{{ url('admin/users/'.$u->user->id.'/edit') }}">
+                                                                {{ $u->user->name }}
+                                                            </a>
+                                                        @else
+                                                            <span class="text-danger">ไม่พบผู้ใช้</span>
+                                                        @endif
+                                                    </td>
                                                     <td>{{ $u->product ? $u->product->name : 'สินค้าถูกลบ' }}</td>
                                                     <td>{{ $u->credit }}</td>
                                                     <td>{{ $u->point }}</td>
@@ -58,6 +66,7 @@ window.gaTitle = 'หน้าแรก';
                                                         {{ $u->status == 1 ? 'สำเร็จ' : 'รอเจ้าหน้าที่ตรวจสอบ' }}
                                                     </td>
                             <td>
+                            @if(Auth::user()->roles[0]->name == 'superadmin' || Auth::user()->roles[0]->name == 'admin')
                               <div class="form-check form-check-flat">
                               <label class="form-check-label">
                                 <input class="checkbox" type="checkbox" @if($u->status == 1)
@@ -66,6 +75,7 @@ window.gaTitle = 'หน้าแรก';
                                 ตรวจสอบแล้ว
                               </label>
                             </div>
+                            @endif
                             </td>
                           </tr>
                           @endforeach
