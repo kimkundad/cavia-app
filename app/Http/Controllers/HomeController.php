@@ -13,6 +13,7 @@ use App\Models\point;
 use App\Models\Credit;
 use Session;
 use Auth;
+use App\Models\ActivityLog;
 
 
 class HomeController extends Controller
@@ -359,6 +360,9 @@ class HomeController extends Controller
             ]);
         }
 
+        $logDetails = [];
+
+
         // ลด Point ของ User
         $user->point -= $request->point;
         $user->save();
@@ -373,6 +377,27 @@ class HomeController extends Controller
         $credit->status = 0; // 1 = สำเร็จ
         $credit->note = "แลก Point เป็น Credit";
         $credit->save();
+
+        $package1 = new point();
+        $package1->user_key = $user->phone;
+        $package1->date = date('Y-m-d');
+        $package1->total_valid_bet_amount = 0;
+        $package1->point = $request->point;
+        $package1->type = 1;
+        $package1->last_point = $user->point;
+        $package1->detail = $user->name.' ได้ใช้ Point '.$request->point.' แลกเครดิตฟรี '.$request->credit;
+        $package1->save();
+
+        $logDetails[] = $user->name.' ได้ใช้ Point '.$request->point.' แลกเครดิตฟรี '.$request->credit;
+
+        // บันทึก Log ถ้ามีการเปลี่ยนแปลง
+    if (!empty($logDetails)) {
+        ActivityLog::create([
+            'ลูกค้่' => $user->name,
+            'action' => 'แลกเครดิตฟรี',
+            'details' => implode(', ', $logDetails)
+        ]);
+    }
 
         return response()->json([
             'success' => true,
