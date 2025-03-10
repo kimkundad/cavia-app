@@ -599,6 +599,7 @@ private function createNewUser(array $data, float $getPoint)
             'points.*',
             'points.id as idp',
             'points.point as points',
+            'points.created_at as created_ats',
             'users.*',
             'users.id as idu'
             )
@@ -610,6 +611,7 @@ private function createNewUser(array $data, float $getPoint)
             'points.*',
             'points.id as idp',
             'points.point as points',
+            'points.created_at as created_ats',
             'users.*',
             'users.id as idu'
             )
