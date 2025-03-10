@@ -45,11 +45,12 @@ window.gaTitle = 'หน้าแรก';
         @endif
 
 
-
+        @if(Auth::user()->roles[0]->name === 'superadmin')
         <div class="form-group">
           <label for="exampleInputUsername1">รหัสผ่าน ( 8 ตัวขึ้นไป ) <span class="text-danger">*</span></label>
           <input type="text" class="form-control" id="exampleInputUsername1" name="password" value="{{ $objs->code_user }}">
         </div>
+        @endif
 
         @if(Auth::user()->roles[0]->name == 'superadmin')
 

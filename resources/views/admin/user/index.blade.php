@@ -14,6 +14,18 @@ window.gaTitle = 'หน้าแรก';
 
 <div class="row">
 
+<div class="btn-group mb-3">
+    <a href="{{ url('admin/users') }}" class="btn btn-secondary {{ !$selectedRole ? 'active' : '' }}">ทั้งหมด</a>
+    <a href="{{ url('admin/users?role=3') }}" class="btn btn-primary {{ $selectedRole == 3 ? 'active' : '' }}">ลูกค้า</a>
+    <a href="{{ url('admin/users?role=4') }}" class="btn btn-info {{ $selectedRole == 4 ? 'active' : '' }}">Operator</a>
+    @if(Auth::user()->roles[0]->name === 'superadmin' || Auth::user()->roles[0]->name === 'admin')
+    <a href="{{ url('admin/users?role=2') }}" class="btn btn-warning {{ $selectedRole == 2 ? 'active' : '' }}">Admin</a>
+    @endif
+    @if(Auth::user()->roles[0]->name === 'superadmin')
+        <a href="{{ url('admin/users?role=1') }}" class="btn btn-danger {{ $selectedRole == 1 ? 'active' : '' }}">Superadmin</a>
+    @endif
+</div>
+
                 <div class="col-md-12">
                 <form class="form-horizontal" action="{{url('admin/user_search')}}" method="GET" enctype="multipart/form-data">
                           {{ csrf_field() }}
@@ -60,7 +72,7 @@ window.gaTitle = 'หน้าแรก';
                       @foreach($objs as $u)
                           <tr access_id="{{$u->id}}">
                             <td>
-                              {{$u->name}}
+                              {{$u->name}} ( #{{ $u->id }} )
                             </td>
                             <td>
                               {{$u->point}}

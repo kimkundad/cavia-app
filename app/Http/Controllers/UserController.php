@@ -16,10 +16,15 @@ use App\Models\ActivityLog;
 class UserController extends Controller
 {
     //
-    public function index()
-    {
-        $userRole = Auth::user()->roles[0]->name; // ดึง Role ของ User ที่ Login
+    public function index(Request $request)
+{
+    $userRole = Auth::user()->roles[0]->name; // ดึง Role ของผู้ใช้ที่ Login
+    $selectedRole = $request->get('role'); // รับค่าที่เลือกจากปุ่มกรอง
 
+    // กรณี SuperAdmin ค้นหาทุก Role
+    if ($userRole === 'superadmin') {
+        $query = User::query();
+    } else {
         // เริ่ม Query โดยไม่แสดง SuperAdmin (role_id = 1)
         $query = User::whereNotIn('id', function ($q) {
             $q->select('user_id')->from('role_user')->where('role_id', 1);
@@ -31,18 +36,27 @@ class UserController extends Controller
                 $q->where('role_id', 3);
             });
         }
-
-        // นับจำนวน User ที่พบ
-        $count_user = $query->count();
-
-        // ดึงข้อมูล User
-        $objs = $query->orderBy('id', 'desc')->paginate(15);
-
-        return view('admin.user.index', [
-            'count_user' => $count_user,
-            'objs' => $objs
-        ]);
     }
+
+    // ถ้ามีการเลือก Role กรองเฉพาะ Role นั้น ๆ
+    if ($selectedRole) {
+        $query->whereHas('roles', function ($q) use ($selectedRole) {
+            $q->where('role_id', $selectedRole);
+        });
+    }
+
+    // นับจำนวน User ที่พบ
+    $count_user = $query->count();
+
+    // ดึงข้อมูล User
+    $objs = $query->orderBy('id', 'desc')->paginate(15);
+
+    return view('admin.user.index', [
+        'count_user' => $count_user,
+        'objs' => $objs,
+        'selectedRole' => $selectedRole // ส่งค่า role ที่เลือกไปที่ View
+    ]);
+}
 
     public function create()
     {
@@ -64,20 +78,25 @@ class UserController extends Controller
     $search = $request->get('search');
     $userRole = Auth::user()->roles[0]->name; // ดึง Role ของผู้ใช้ที่ Login
 
-    // เริ่มต้น Query ค้นหา User
-    $query = User::where('name', 'like', "%$search%");
-
-    // กรองไม่ให้ค้นหา SuperAdmin (role_id = 1)
-    $query->whereNotIn('id', function ($q) {
-        $q->select('user_id')->from('role_user')->where('role_id', 1);
-    });
-
-    // ถ้าเป็น Operator ค้นหาได้แค่ลูกค้า (role_id = 3)
-    if ($userRole === 'operator') {
-        $query->whereHas('roles', function ($q) {
-            $q->where('role_id', 3);
+    // ถ้าเป็น SuperAdmin ให้ค้นหาได้ทั้งหมด
+    if ($userRole === 'superadmin') {
+        $query = User::query();
+    } else {
+        // เริ่มต้น Query โดยไม่รวม SuperAdmin (role_id = 1)
+        $query = User::whereNotIn('id', function ($q) {
+            $q->select('user_id')->from('role_user')->where('role_id', 1);
         });
+
+        // ถ้าเป็น Operator ให้แสดงเฉพาะลูกค้า (role_id = 3)
+        if ($userRole === 'operator') {
+            $query->whereHas('roles', function ($q) {
+                $q->where('role_id', 3);
+            });
+        }
     }
+
+    // ค้นหาชื่อที่ตรงกับคำค้นหา
+    $query->where('name', 'like', "%$search%");
 
     // ดึงข้อมูลตามเงื่อนไขทั้งหมด
     $cat = $query->paginate(15);
@@ -117,34 +136,71 @@ class UserController extends Controller
        return redirect(url('admin/users/'))->with('add_success','คุณทำการเพิ่มอสังหา สำเร็จ');
     }
 
+    // public function edit($id)
+    // {
+    //     //
+
+
+    //     $cat2 = DB::table('role_user')
+    //    ->where('user_id', $id)
+    //    ->first();
+
+    //    $data['cat2'] = $cat2;
+
+    //     $obj = User::find($id);
+    //     $data['url'] = url('admin/users/'.$id);
+    //     $data['method'] = "put";
+
+    //     $point = point::where('user_key', $obj->phone)->orderby('id', 'desc')->paginate(15);
+    //     $data['point'] = $point;
+
+    //     $sumpoint = point::where('user_key', $obj->phone)->where('type', 0)->orwhere('type', 2)->sum('point');
+    //     $data['sumpoint'] = $sumpoint;
+
+    //     $sumpointdel = point::where('user_key', $obj->phone)->where('type', 1)->sum('point');
+    //     $data['sumpointdel'] = $sumpointdel;
+
+    //   //  dd($point_final);
+    //     $data['objs'] = $obj;
+    //     return view('admin.user.edit', $data);
+    // }
+
+
     public function edit($id)
-    {
-        //
+{
+    // ตรวจสอบว่า User ที่ต้องการแก้ไขคือ SuperAdmin หรือไม่
+    $userRole = DB::table('role_user')->where('user_id', $id)->first();
 
+    // ถ้าเป็น SuperAdmin และผู้ใช้ปัจจุบันไม่ใช่ SuperAdmin → ป้องกันการเข้าถึง
+    if ($userRole && $userRole->role_id == 1 && Auth::user()->roles[0]->name !== 'superadmin') {
+        return redirect()->back()->with('error', 'คุณไม่มีสิทธิ์เข้าถึงผู้ใช้ระดับ SuperAdmin');
+    }
 
-        $cat2 = DB::table('role_user')
+    // ค้นหาข้อมูล User
+    $obj = User::findOrFail($id);
+
+    // URL สำหรับอัปเดต
+    $data['url'] = url('admin/users/' . $id);
+    $data['method'] = "put";
+
+    // ดึงข้อมูล Point ของผู้ใช้
+    $point = Point::where('user_key', $obj->phone)->orderby('id', 'desc')->paginate(15);
+    $data['point'] = $point;
+
+    $cat2 = DB::table('role_user')
        ->where('user_id', $id)
        ->first();
 
        $data['cat2'] = $cat2;
 
-        $obj = User::find($id);
-        $data['url'] = url('admin/users/'.$id);
-        $data['method'] = "put";
+    // คำนวณยอดพอยท์
+    $data['sumpoint'] = Point::where('user_key', $obj->phone)->whereIn('type', [0, 2])->sum('point');
+    $data['sumpointdel'] = Point::where('user_key', $obj->phone)->where('type', 1)->sum('point');
 
-        $point = point::where('user_key', $obj->phone)->orderby('id', 'desc')->paginate(15);
-        $data['point'] = $point;
-
-        $sumpoint = point::where('user_key', $obj->phone)->where('type', 0)->orwhere('type', 2)->sum('point');
-        $data['sumpoint'] = $sumpoint;
-
-        $sumpointdel = point::where('user_key', $obj->phone)->where('type', 1)->sum('point');
-        $data['sumpointdel'] = $sumpointdel;
-
-      //  dd($point_final);
-        $data['objs'] = $obj;
-        return view('admin.user.edit', $data);
-    }
+    // ส่งข้อมูลไปยัง View
+    $data['objs'] = $obj;
+    return view('admin.user.edit', $data);
+}
 
 
     public function update_point($id){
