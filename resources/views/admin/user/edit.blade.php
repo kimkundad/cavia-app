@@ -35,14 +35,17 @@ window.gaTitle = 'หน้าแรก';
           <input type="text" class="form-control" id="exampleInputUsername1" name="phone" value="{{ $objs->phone }}">
         </div>
 
+       <div class="form-group">
+        <label for="exampleInputUsername1">พอยท์ <span class="text-danger">*</span></label>
+
         @if(Auth::user()->roles[0]->name == 'superadmin')
-
-        <div class="form-group">
-          <label for="exampleInputUsername1">พอยท์ <span class="text-danger">*</span></label>
-          <input type="text" class="form-control" id="exampleInputUsername1" name="point" value="{{ $objs->point }}">
-        </div>
-
+            <!-- SuperAdmin สามารถแก้ไขได้ -->
+            <input type="text" class="form-control" id="exampleInputUsername1" name="point" value="{{ $objs->point }}">
+        @elseif(Auth::user()->roles[0]->name == 'admin' || Auth::user()->roles[0]->name == 'operator')
+            <!-- Admin & Operator เห็นค่าพอยท์ แต่แก้ไขไม่ได้ -->
+            <input type="text" class="form-control" value="{{ $objs->point }}" readonly>
         @endif
+    </div>
 
 
 
